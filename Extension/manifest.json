@@ -8,7 +8,7 @@
   "action": {
       "default_popup": "index.html", "default_title": "Vueable Query"
   },
-  "devtools_page": "index.html",
+  "devtools_page": "devtools.html",
   "permissions": [
     "tabs"
   ], 
