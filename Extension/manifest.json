@@ -6,7 +6,7 @@
   "author": "Anna Duong, Brandon Yoon, Eric Tjon, & Esther Witbeck",
 
   "action": {
-      "default_popup": "index.html", "default_title": "Vueable Query"
+      "default_popup": "popup.html", "default_title": "Vueable Query"
   },
   "devtools_page": "devtools.html",
   "permissions": [
