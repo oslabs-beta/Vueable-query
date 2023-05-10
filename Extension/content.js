@@ -10,10 +10,10 @@ if(document.readyState === 'loading') {
 function afterDOMLoaded(){
   console.log('Dom Content loaded')
   
-  var s = document.createElement('script');
-  s.src = chrome.runtime.getURL('script.js');
-  s.onload = function() { this.remove(); };
-  (document.head || document.documentElement).appendChild(s);
+  var script = document.createElement('script');
+  script.src = chrome.runtime.getURL('script.js');
+  script.onload = function() { this.remove(); };
+  (document.head || document.documentElement).appendChild(script);
 
 
   window.addEventListener('message', function(event) {
@@ -22,16 +22,17 @@ function afterDOMLoaded(){
       return;
     }
   
-    var message = event.data;
-  
+    const message = event.data;
     // Only accept messages that we know are ours
     if (typeof message !== 'object' || message === null ||
         message.source !== 'vueable-query-extension') {
       return;
     }
     
-    console.log('content script heard window:', message);
-//    chrome.runtime.sendMessage(message);
+    console.log('content.js received from script.js:', message);
+    console.log('content.js sending to background.js');
+    // forward message to background.js
+    chrome.runtime.sendMessage(message);
   });
 }
 
