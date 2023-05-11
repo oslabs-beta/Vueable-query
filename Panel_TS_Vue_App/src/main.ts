@@ -29,6 +29,7 @@ backgroundPageConnection.postMessage({
 
 backgroundPageConnection.onMessage.addListener((message: Message) => {
   const { startTime, endTime, type, event } = message.payload;
-    console.log('main.ts: message received at its destination!', startTime, endTime, type, event.query.queryHash);
+    console.log('main.ts: message received at its destination!', startTime, endTime, type, event.query.queryHash, message);
     store.addNewQuery(message);
+
 });

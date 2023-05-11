@@ -2,18 +2,14 @@
 import { useQueryStore } from '../store';
 
   const storeQuery = useQueryStore();
-  
+
 </script>
 
 <template>
   <div id="timeline-panel">
     <h2>TimeLine</h2> 
-    <div 
-      v-for="(startTime) in storeQuery.startTimeArray"
-      :key="startTime"
-      className="queryBox"
-    >
-    {{ startTime }}
+    <div>
+      {{ }}
     </div>
   </div>
  

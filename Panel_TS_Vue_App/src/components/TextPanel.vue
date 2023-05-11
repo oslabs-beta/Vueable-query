@@ -1,13 +1,20 @@
 <script setup lang="ts">
 import { useQueryStore } from '../store';
 
-  const queryStore = useQueryStore(); 
+  const storeQuery = useQueryStore(); 
+  
 </script>
 
 <template>
   <div id="text-panel">
     <h2>Text</h2>
-    {{ queryStore.queries }}
+    <div
+      v-for="q in storeQuery.textArray"
+      :key="q.queryHash"
+    >
+      {{ q }}
+    </div>
+    
   </div>
  
 </template>
