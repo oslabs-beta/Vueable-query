@@ -1,6 +1,6 @@
 //obtain queryClient from the app element props
-const queryClient = document.getElementById('app').__vue_app__._context.app._context.provides.VUE_QUERY_CLIENT
-const queryCache = queryClient.getQueryCache()
+const queryClient = document.getElementById('app').__vue_app__._context.app._context.provides.VUE_QUERY_CLIENT;
+const queryCache = queryClient.getQueryCache();
 //querystorage holds the start time value at the key queryHash
 const queryStorage = new Map();
 const callback = (event) => {
