@@ -35,7 +35,7 @@ function messageWindow ({ event, startTime, endTime, type }) {
   //useful information in cache and observer? but we cant include it here because of circular references
   window.postMessage({
     source: 'vueable-query-extension',
-    message: {
+    payload: {
       startTime,
       endTime,
       type,

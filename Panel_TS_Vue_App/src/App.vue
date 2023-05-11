@@ -7,7 +7,6 @@ const storeQuery = useQueryStore();
 
 <template>
   <div>
-    <button id="sent-message-test" @click="storeQuery.addNewQuery"></button>
     <TimelinePanel />
     <TextPanel />
   </div>
