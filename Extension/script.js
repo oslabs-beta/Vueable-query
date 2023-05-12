@@ -4,22 +4,24 @@ const queryCache = queryClient.getQueryCache();
 //querystorage holds the start time value at the key queryHash
 const queryStorage = new Map();
 const callback = (event) => {
+  // new query (either fresh or after invalidation)
   if(event.type === 'added'){
-    // console.log('whole dang event:', event);
-    queryStorage.set(event.query.queryHash, Date.now())
-    //Query Start
-    messageWindow({ event, startTime: queryStorage.get(event.query.queryHash), endTime: undefined, type: 'start' } );
-  }
-  else if((event.type === 'updated' && event.action.type === 'success')){
-    if(queryStorage.has(event.query.queryHash)){
-      const endTime = Date.now();
-      //Query End
+    // record start time
+    queryStorage.set(event.query.queryHash, [Date.now(), ])
+    messageWindow({ event, startTime: queryStorage.get(event.query.queryHash)[0], endTime: undefined, type: 'start' } );
+  } else if((event.type === 'updated' && event.action.type === 'success')){
+    let [startTime, endTime] = queryStorage.get(event.query.queryHash);
+    //Query started, but no end time, so we know this update is the end
+    if(!endTime){
+      // record end time
+      endTime = Date.now();
+      queryStorage.set(event.query.queryHash, [startTime, endTime])
       messageWindow(
-        { event, startTime: queryStorage.get(event.query.queryHash), endTime, type: 'end' }
+        { event, startTime, endTime, type: 'end' }
       );
-      queryStorage.remove(event.query.queryHash);
+      // end time already recorded, so cache hit
     } else {
-      //Query Start, Cache hit
+      // return only time accessed
       startTime = endTime = Date.now();
       messageWindow({ event, startTime, endTime, type: 'cache' });
     }
@@ -27,7 +29,7 @@ const callback = (event) => {
 }
 const unsubscribe = queryCache.subscribe(callback)
 
-//script.js -> content.js
+// send from script.js to content.js
 function messageWindow ({ event, startTime, endTime, type }) {
   // console.log('tidied event:\n', 
   //   { ...event, query: { ...event.query, cache: null, observers: null } }

@@ -1,5 +1,5 @@
 const connections = {};
-
+const history = [];
 chrome.runtime.onConnect.addListener(function (port) {
     console.log('On connect add listener')
     const extensionListener = function (message, sender, sendResponse) {
@@ -7,6 +7,9 @@ chrome.runtime.onConnect.addListener(function (port) {
         // DevTools page, so we need to send it explicitly.
         if (message.name == "init") {
           connections[message.tabId] = port;
+          history.forEach((request) => {
+            connections[tabId].postMessage(request);
+          });
           return;
         }
 	// other message handling
@@ -29,6 +32,7 @@ chrome.runtime.onConnect.addListener(function (port) {
 // content.js -> here -> devtool panel
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     // Messages from content scripts should have sender.tab set
+    history.push(request);
     if (sender.tab) {
       const tabId = sender.tab.id;
       if (tabId in connections) {
