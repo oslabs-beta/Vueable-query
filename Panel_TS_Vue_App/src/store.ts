@@ -11,7 +11,7 @@ export const useQueryStore = defineStore('query', () => {
   const queries = ref(initQuery);
 
   function addNewQuery(message: Message) {
-    console.log('Message ready to go to Store: ', message);
+    // console.log('Message ready to go to Store: ', message);
     queries.value.push(message);
     
   }
@@ -48,8 +48,6 @@ export const useQueryStore = defineStore('query', () => {
       }
     })
   }) 
-  // queries.$patch((state)=>{
-  //   state.push({"newQueryKey": "key", "newData": "data"})
-  // })
+
   return { queries, addNewQuery, textArray }
 })

@@ -27,7 +27,7 @@ function afterDOMLoaded(){
       return;
     }
     
-    // console.log('content.js received from script.js:', message);
+    console.log('content.js received from script.js:', message);
     // console.log('content.js sending to background.js');
     // forward message to background.js
     chrome.runtime.sendMessage(message);

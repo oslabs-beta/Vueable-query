@@ -2,6 +2,9 @@
 const queryClient = document.getElementById('app').__vue_app__._context.app._context.provides.VUE_QUERY_CLIENT;
 const queryCache = queryClient.getQueryCache();
 //querystorage holds the start time value at the key queryHash
+
+const defaultStart = Date.now();
+
 const queryStorage = new Map();
 const callback = (event) => {
   // new query (either fresh or after invalidation)
@@ -10,7 +13,12 @@ const callback = (event) => {
     queryStorage.set(event.query.queryHash, [Date.now(), ])
     messageWindow({ event, startTime: queryStorage.get(event.query.queryHash)[0], endTime: undefined, type: 'start' } );
   } else if((event.type === 'updated' && event.action.type === 'success')){
-    let [startTime, endTime] = queryStorage.get(event.query.queryHash);
+    let startTime, endTime;
+    if(queryStorage.has(event.query.queryHash)){
+      [startTime, endTime] = queryStorage.get(event.query.queryHash);
+    } else {
+      startTime = defaultStart;
+    }
     //Query started, but no end time, so we know this update is the end
     if(!endTime){
       // record end time
