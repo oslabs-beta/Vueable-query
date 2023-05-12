@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useQueryStore } from '../store';
-
+import { VueDd } from 'vue-dd'
   const storeQuery = useQueryStore(); 
   
 </script>
@@ -12,9 +12,9 @@ import { useQueryStore } from '../store';
       v-for="q in storeQuery.textArray"
       :key="q.queryHash"
     >
-      {{ q }}
+    <vue-dd :model-value="q" />
     </div>
-    
+  
   </div>
  
 </template>
