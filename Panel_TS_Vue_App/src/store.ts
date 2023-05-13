@@ -8,39 +8,15 @@ export const useQueryStore = defineStore('query', () => {
   //ref hook is similar to useState
 
   const initQuery: Message[] = [];
-  const queries = ref(initQuery);
-
-  // const current = ref()
+  const data = ref(initQuery);
 
   function addNewQuery(message: Message) {
-    // console.log('Message ready to go to Store: ', message);
-    queries.value.push(message);
-    
+    // console.log('Adding message to store: ', message);
+    data.value.push(message);
   }
 
-  // const startTimeArray = computed(() => {
-  //   return queries.value.map(x => {
-  //     return x.payload.startTime;
-  //   })
-  // })
-
-  // const queryHashArray = computed(() => {
-  //   return queries.value.map(x => {
-  //     return x.payload.event.query.queryHash;
-  //   })
-  // }) 
-
-  // const timeLineArray = computed(() => {
-  //   return queries.value.map(message => {
-  //     return {
-  //       queryHash: message.payload.event.query.queryHash,
-  //       startTime: message.payload.startTime,
-  //       endTime: message.payload.endTime}
-  //     })
-  // }) 
-
-  const textArray = computed(() => {
-    return queries.value.map(message => {
+  const queries = computed(() => {
+    return data.value.map(message => {
       return {
         queryHash: message.payload.event.query.queryHash,
         startTime: message.payload.startTime,
@@ -51,5 +27,13 @@ export const useQueryStore = defineStore('query', () => {
     })
   }) 
 
-  return { queries, addNewQuery, textArray }
+  //filter by end
+  const endQueries = computed(() =>  queries.value.filter((obj) => obj.type === 'end'));
+  
+  //filter by cache
+  const cacheQueries = computed(() => queries.value.filter((obj):boolean => (obj.type === 'cache')));
+
+  //filter by start
+
+  return { queries, addNewQuery, endQueries, cacheQueries}
 })

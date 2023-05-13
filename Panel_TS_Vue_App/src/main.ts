@@ -26,7 +26,6 @@ backgroundPageConnection.postMessage({
 //check querykey and messages for concurrent ones
 // background.js -> here
 
-
 backgroundPageConnection.onMessage.addListener((message: Message) => {
   const { startTime, endTime, type, event } = message.payload;
     console.log('main.ts: message received at its destination!', startTime, endTime, type, event.query.queryHash, message);
