@@ -3,8 +3,14 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 
 const app = createApp(App)
-app.use(createPinia())
+const pinia = createPinia()
+
+app.use(pinia)
 app.mount('#app')
+
+
+import { useQueryStore } from './store'
+const store = useQueryStore();
 
 // Create a connection to the service worker
 const backgroundPageConnection = chrome.runtime.connect({
@@ -20,6 +26,9 @@ backgroundPageConnection.postMessage({
 //check querykey and messages for concurrent ones
 // background.js -> here
 
-backgroundPageConnection.onMessage.addListener((message: object) => {
-    console.log('main.ts: message received at its destination!', message)
+backgroundPageConnection.onMessage.addListener((message: Message) => {
+  const { startTime, endTime, type, event } = message.payload;
+    console.log('main.ts: message received at its destination!', startTime, endTime, type, event.query.queryHash, message);
+    store.addNewQuery(message);
+
 });

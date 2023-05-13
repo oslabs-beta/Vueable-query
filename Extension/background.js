@@ -1,14 +1,20 @@
 const connections = {};
-
+let history = [];
+let currentTabId;
 chrome.runtime.onConnect.addListener(function (port) {
     console.log('On connect add listener')
     const extensionListener = function (message, sender, sendResponse) {
-        // The original connection event doesn't include the tab ID of the
-        // DevTools page, so we need to send it explicitly.
-        if (message.name == "init") {
-          connections[message.tabId] = port;
-          return;
-        }
+      // The original connection event doesn't include the tab ID of the
+      // DevTools page, so we need to send it explicitly.
+      if (message.name == "init") {
+        currentTabId = message.tabId;
+        connections[message.tabId] = port;
+        console.log('Sending history over for new connection')
+        history.forEach((request) => {
+          connections[message.tabId].postMessage(request);
+        });
+        return;
+      }
 	// other message handling
     }
     // Listen to messages sent from the DevTools page
@@ -29,6 +35,7 @@ chrome.runtime.onConnect.addListener(function (port) {
 // content.js -> here -> devtool panel
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     // Messages from content scripts should have sender.tab set
+    history.push(request);
     if (sender.tab) {
       const tabId = sender.tab.id;
       if (tabId in connections) {
@@ -42,3 +49,12 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     }
     return true;
 });
+
+// when a tab closes, if it's the tab with active history, clear history
+chrome.tabs.onRemoved.addListener(
+  (tabId) => {
+    if (tabId === currentTabId){
+      history = [];
+    }
+  }
+)
