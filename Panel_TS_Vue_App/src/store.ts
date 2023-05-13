@@ -10,6 +10,8 @@ export const useQueryStore = defineStore('query', () => {
   const initQuery: Message[] = [];
   const queries = ref(initQuery);
 
+  // const current = ref()
+
   function addNewQuery(message: Message) {
     // console.log('Message ready to go to Store: ', message);
     queries.value.push(message);
