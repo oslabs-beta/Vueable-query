@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useQueryStore } from '../store';
 
-  const storeQuery = useQueryStore();
+  const store = useQueryStore();
 
 </script>
 
@@ -9,7 +9,7 @@ import { useQueryStore } from '../store';
   <div id="timeline-panel">
     <h2>TimeLine</h2> 
     <div>
-      {{ }}
+      {{  }}
     </div>
   </div>
  
