@@ -49,14 +49,28 @@ export const useQueryStore = defineStore('query', () => {
       }
     })
   }) 
-
+  //group by Query Hash
+  //indexable type [queryHash: string] means that any key of result must be a string
+  //queryHash in this case only describes the string, but does not show up in the final object
+  const groupedQueries = computed<{[queryHash: string]: FormattedQuery[]}>(() => {
+    //group the queries array by queryHash
+    const result: {[queryHash: string]: FormattedQuery[]} = {};
+    queries.value.forEach((q) => { 
+      //if queryHash is not in result, initialize an empty array
+      if(!result.hasOwnProperty(q.queryHash)) {
+        result[q.queryHash] = [];
+      }
+      result[q.queryHash].push(q);
+    })
+    return result
+  })
+  
   //filter by end
   const endQueries = computed<FormattedQuery[]>(() =>  queries.value.filter((obj) => obj.type === 'end'));
   
   //filter by cache
   const cacheQueries = computed<FormattedQuery[]>(() => queries.value.filter((obj):boolean => (obj.type === 'cache')));
 
-  //filter by start
 
-  return { queries, addNewQuery, endQueries, cacheQueries, setSelection, setHoverSelection, selection, hoverSelection, addPageStartTime, lastEndTime}
+  return { queries, addNewQuery, endQueries, cacheQueries, setSelection, setHoverSelection, selection, hoverSelection, addPageStartTime, lastEndTime, groupedQueries}
 })

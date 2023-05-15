@@ -7,6 +7,13 @@ import { useQueryStore } from '../store';
 <template>
   <div id="timeline-panel">
     <h2>TimeLine: end time is {{  store.lastEndTime }}</h2> 
+
+    <!-- <div
+      v-for="(queryList, queryHash) in store.groupedQueries"
+      >
+      {{ queryHash }}: {{ queryList }}
+    </div> -->
+    
     <div 
     v-for="q in store.queries"
     :key="q.queryHash"
