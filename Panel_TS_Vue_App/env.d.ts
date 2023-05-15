@@ -26,5 +26,6 @@ interface FormattedQuery {
   duration: string;
   type: string;
   selected: boolean;
+  hovered: boolean;
   originalIndex: number;
 }

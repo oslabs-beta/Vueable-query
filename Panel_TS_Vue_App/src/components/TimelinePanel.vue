@@ -11,7 +11,9 @@ import { useQueryStore } from '../store';
     v-for="q in store.queries"
     :key="q.queryHash"
     @click="store.setSelection(q.originalIndex)"
-    v-bind:style="q.selected ? {backgroundColor :'yellow'} : {}"
+    @mouseover="store.setHoverSelection(q.originalIndex)"
+    @mouseleave="store.setHoverSelection(-1)"
+    v-bind:style="q.selected ? {backgroundColor :'yellow'} : (q.hovered ? {backgroundColor :'aqua'} : {})"
     class="query-timeline"
     >
       {{ q.queryHash }} {{  q.type }}: Started at {{ q.startTime }}
@@ -29,6 +31,7 @@ import { useQueryStore } from '../store';
   }
   .query-timeline:hover {
     cursor: pointer;
+    /* background-color: rgba(0, 255, 255, 0.26); */
   }
   .queryBox {
     width: fit-content;

@@ -15,9 +15,11 @@
       :key="q.queryHash"
       >
       <!-- if end query selected, make below div highlighted -->
-      <div @click="store.setSelection(q.originalIndex)"
-      v-bind:style="q.selected ? {backgroundColor :'yellow'} : {}"
-      class="query-text"
+      <div
+      @mouseover="store.setHoverSelection(q.originalIndex)"
+      @mouseleave="store.setHoverSelection(-1)"
+      @click="store.setSelection(q.originalIndex)"
+      v-bind:style="q.selected ? {backgroundColor :'yellow'} : (q.hovered ? {backgroundColor :'aqua'} : {})"
       >
         <span> Query for key: {{ JSON.parse(q.queryHash) }} <br/> </span>
         <vue-dd class="text-panel-object" max-width="80%" :dark="false" :model-value="q" />
@@ -26,7 +28,9 @@
       <div
         v-for="c in store.cacheQueries.filter((obj):boolean=> obj.queryHash === q.queryHash)"
         :key="c.queryHash"
-        v-bind:style="c.selected ? {backgroundColor :'yellow'} : {}"
+        v-bind:style="c.selected ? {backgroundColor :'yellow'} : (c.hovered ? {backgroundColor :'aqua'} : {})"        
+        @mouseover="store.setHoverSelection(q.originalIndex)"
+        @mouseleave="store.setHoverSelection(-1)"
         @click="store.setSelection(c.originalIndex)"
         class="query-text"
       >
@@ -47,6 +51,7 @@
   }
   .query-text:hover {
     cursor: pointer;
+    /* background-color: rgba(0, 255, 255, 0.25); */
   }
 /* 
   .text-panel-object {

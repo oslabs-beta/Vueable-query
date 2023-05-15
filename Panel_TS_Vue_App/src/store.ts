@@ -10,6 +10,7 @@ export const useQueryStore = defineStore('query', () => {
   const data: Ref<Message[]> = ref([]);
   //selection is the index of the query?
   let selection: Ref<number> = ref(-1)
+  let hoverSelection: Ref<number> = ref(-1)
 
   function addNewQuery(message: Message) {
     console.log('Adding message to store');
@@ -21,6 +22,11 @@ export const useQueryStore = defineStore('query', () => {
     selection.value = index;
   }
 
+  function setHoverSelection(index: number) {
+    console.log('Changing hoverSelection to ', index)
+    hoverSelection.value = index;
+  }
+
   const queries= computed<FormattedQuery[]>(() => {
     return data.value.map((message, i) => {
       return {
@@ -30,7 +36,8 @@ export const useQueryStore = defineStore('query', () => {
         duration: `${message.payload.endTime -  message.payload.startTime}ms`,
         type: message.payload.type,
         selected: i === selection.value,
-        originalIndex: i
+        hovered: i === hoverSelection.value,
+        originalIndex: i,
       }
     })
   }) 
@@ -43,5 +50,5 @@ export const useQueryStore = defineStore('query', () => {
 
   //filter by start
 
-  return { queries, addNewQuery, endQueries, cacheQueries, setSelection}
+  return { queries, addNewQuery, endQueries, cacheQueries, setSelection, setHoverSelection}
 })
