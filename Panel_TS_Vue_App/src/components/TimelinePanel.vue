@@ -6,17 +6,17 @@ import { useQueryStore } from '../store';
 
 <template>
   <div id="timeline-panel">
-    <h2>TimeLine</h2> 
+    <h2>TimeLine: end time is {{  store.lastEndTime }}</h2> 
     <div 
     v-for="q in store.queries"
     :key="q.queryHash"
     @click="store.setSelection(q.originalIndex)"
     @mouseover="store.setHoverSelection(q.originalIndex)"
     @mouseleave="store.setHoverSelection(-1)"
-    v-bind:style="q.selected ? {backgroundColor :'yellow'} : (q.hovered ? {backgroundColor :'aqua'} : {})"
+    v-bind:style="q.originalIndex === store.selection ? {backgroundColor :'yellow'} : (q.originalIndex === store.hoverSelection ? {backgroundColor :'aqua'} : {})"        
     class="query-timeline"
     >
-      {{ q.queryHash }} {{  q.type }}: Started at {{ q.startTime }}
+      {{ q.queryHash }} {{  q.type }}: Started at {{ q.startTime }}ms
     </div>
   </div>
  
@@ -27,7 +27,7 @@ import { useQueryStore } from '../store';
     height: 25rem;
     width: 40rem;
     border-style: solid;
-    text-overflow: ellipsis;
+    overflow: scroll;
   }
   .query-timeline:hover {
     cursor: pointer;

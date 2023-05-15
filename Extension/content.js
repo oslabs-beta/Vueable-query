@@ -19,17 +19,14 @@ function afterDOMLoaded(){
     if (event.source !== window) {
       return;
     }
-  
     const message = event.data;
     // Only accept messages that we know are ours
     if (typeof message !== 'object' || message === null ||
         message.source !== 'vueable-query-extension') {
       return;
     }
-    
-    console.log('content.js received from script.js:', message);
-    // console.log('content.js sending to background.js');
     // forward message to background.js
+    // console.log('content.js received from script.js:', message);
     chrome.runtime.sendMessage(message);
   });
 }

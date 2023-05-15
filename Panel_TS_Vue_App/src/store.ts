@@ -9,21 +9,31 @@ export const useQueryStore = defineStore('query', () => {
 
   const data: Ref<Message[]> = ref([]);
   //selection is the index of the query?
-  let selection: Ref<number> = ref(-1)
-  let hoverSelection: Ref<number> = ref(-1)
+  const selection: Ref<number> = ref(-1)
+  const hoverSelection: Ref<number> = ref(-1)
+
+  const pageStartTime: Ref<number> = ref(-1);
+  const lastEndTime = computed<number>(()=>{
+    //in the case that there is no queries yet
+    if(data.value.length === 0) return 0;
+    console.log('lastEndTime: ', data.value[data.value.length - 1].payload.endTime - pageStartTime.value)
+    return data.value[data.value.length - 1].payload.endTime - pageStartTime.value;
+  })
+
+  function addPageStartTime(time: number) {
+    pageStartTime.value = time;
+    console.log('pageStartTime: ', pageStartTime.value)
+  }
 
   function addNewQuery(message: Message) {
-    console.log('Adding message to store');
     data.value.push(message);
   }
 
   function setSelection(index: number) {
-    console.log('Changing selection to ', index);
     selection.value = index;
   }
 
   function setHoverSelection(index: number) {
-    console.log('Changing hoverSelection to ', index)
     hoverSelection.value = index;
   }
 
@@ -31,12 +41,10 @@ export const useQueryStore = defineStore('query', () => {
     return data.value.map((message, i) => {
       return {
         queryHash: message.payload.event.query.queryHash,
-        startTime: message.payload.startTime,
-        endTime: message.payload.endTime,
+        startTime: message.payload.startTime - pageStartTime.value,
+        endTime: message.payload.endTime - pageStartTime.value,
         duration: `${message.payload.endTime -  message.payload.startTime}ms`,
         type: message.payload.type,
-        selected: i === selection.value,
-        hovered: i === hoverSelection.value,
         originalIndex: i,
       }
     })
@@ -50,5 +58,5 @@ export const useQueryStore = defineStore('query', () => {
 
   //filter by start
 
-  return { queries, addNewQuery, endQueries, cacheQueries, setSelection, setHoverSelection}
+  return { queries, addNewQuery, endQueries, cacheQueries, setSelection, setHoverSelection, selection, hoverSelection, addPageStartTime, lastEndTime}
 })

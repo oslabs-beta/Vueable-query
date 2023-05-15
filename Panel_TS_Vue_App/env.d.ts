@@ -25,7 +25,5 @@ interface FormattedQuery {
   endTime: number;
   duration: string;
   type: string;
-  selected: boolean;
-  hovered: boolean;
   originalIndex: number;
 }
