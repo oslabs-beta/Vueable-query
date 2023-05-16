@@ -15,7 +15,7 @@ import Timeline from './Timeline.vue';
     </div> -->
     
     <Timeline />
-    <div 
+    <!-- <div 
     v-for="q in store.queries"
     :key="q.queryHash"
     @click="store.setSelection(q.originalIndex)"
@@ -25,16 +25,16 @@ import Timeline from './Timeline.vue';
     class="query-timeline"
     >
       {{ q.queryHash }} {{  q.type }}: Started at {{ q.startTime }}ms
-    </div>
+    </div> -->
   </div>
  
 </template>
 
 <style scoped>
-  .query-timeline:hover {
+  /* .query-timeline:hover {
     cursor: pointer;
-    /* background-color: rgba(0, 255, 255, 0.26); */
-  }
+    background-color: rgba(0, 255, 255, 0.26);
+  } */
   .queryBox {
     width: fit-content;
     border-style: solid;

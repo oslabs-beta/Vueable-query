@@ -52,7 +52,6 @@ const refreshGraph = () => {
         .call(d3.axisLeft(y))
         // .attr('transform', `translate(-10, 0)`)
 
-
     svg.append('g')
         .call(d3.axisTop(x));
 
@@ -92,32 +91,6 @@ const refreshGraph = () => {
             console.log('clicked');
             store.setSelection(d.originalIndex);
         })
-                
-
-                
-        // .on({
-        //     "mouseover": (e, d) => {
-        //         console.log('mouseover');
-        //         store.setHoverSelection(d.originalIndex)},
-        //     "mouseout": () => {
-        //         console.log('mouseout');
-        //         store.setHoverSelection(-1)},
-        //     "click": (e, d) => {
-        //         console.log('clicked');
-        //         store.setSelection(d.originalIndex)}
-        // })
-
-        // .on({
-        //   "mouseover": function() { /* do stuff */ },
-        //   "mouseout":  function() { /* do stuff */ }, 
-        //   "click":  function() { /* do stuff */ }, 
-        // });
-        // change color based on q.originalIndex
-
-    //     @click="store.setSelection(q.originalIndex)"
-    // @mouseover="store.setHoverSelection(q.originalIndex)"
-    // @mouseleave="store.setHoverSelection(-1)"
-    // v-bind:style="q.originalIndex === store.selection ? {backgroundColor :'yellow'} : (q.originalIndex === store.hoverSelection ? {backgroundColor :'aqua'} : {})"        
 }
 
 watch(() => store.queries, refreshGraph)
@@ -139,6 +112,4 @@ watch(() => store.hoverSelection, refreshGraph)
     .query{
         cursor: pointer;
     }
-
-    
 </style>
