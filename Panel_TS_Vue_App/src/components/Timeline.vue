@@ -7,7 +7,7 @@ const store = useQueryStore();
 
 //margins
 const margins = ref({
-    top: 10,
+    top: 25,
     right: 10,
     bottom: 10,
     left: 100
@@ -41,7 +41,7 @@ const refreshGraph = () => {
 
     const x = d3.scaleLinear()
         .domain([0, store.lastEndTime])
-        .range([margins.value.left, width.value]);
+        .range([0, width.value]);
 
     //y axis
     const y = d3.scaleBand()
@@ -49,10 +49,12 @@ const refreshGraph = () => {
         .range([0, height.value]);
 
     svg.append('g')
-        .call(d3.axisLeft(y));
+        .call(d3.axisLeft(y))
+        // .attr('transform', `translate(-10, 0)`)
+
 
     svg.append('g')
-        .call(d3.axisBottom(x));
+        .call(d3.axisTop(x));
 
     svg.selectAll('.query')
         .data(store.queries)
@@ -77,6 +79,11 @@ const refreshGraph = () => {
         //   "click":  function() { /* do stuff */ }, 
         // });
         // change color based on q.originalIndex
+
+    //     @click="store.setSelection(q.originalIndex)"
+    // @mouseover="store.setHoverSelection(q.originalIndex)"
+    // @mouseleave="store.setHoverSelection(-1)"
+    // v-bind:style="q.originalIndex === store.selection ? {backgroundColor :'yellow'} : (q.originalIndex === store.hoverSelection ? {backgroundColor :'aqua'} : {})"        
 }
 
 watch(() => store.queries, refreshGraph)
