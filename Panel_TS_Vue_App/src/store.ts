@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
-import type { Ref } from 'vue'
+import type { Ref } from 'vue';
 export const useQueryStore = defineStore('query', () => {
   // log ref
   // destructure from ref
@@ -37,7 +37,7 @@ export const useQueryStore = defineStore('query', () => {
     hoverSelection.value = index;
   }
 
-  const queries= computed<FormattedQuery[]>(() => {
+  const queries = computed<FormattedQuery[]>(() => {
     return data.value.map((message, i) => {
       return {
         queryHash: message.payload.event.query.queryHash,
@@ -64,6 +64,17 @@ export const useQueryStore = defineStore('query', () => {
     })
     return result
   })
+
+  const keys = computed<string[]>(() => {
+    const result: string[] = [];
+    queries.value.forEach((q) => { 
+      //if queryHash is not in result, initialize an empty array
+      if(!result.includes(q.queryHash)) {
+        result.push(q.queryHash)
+      }
+    })
+    return result
+  })
   
   //filter by end
   const endQueries = computed<FormattedQuery[]>(() =>  queries.value.filter((obj) => obj.type === 'end'));
@@ -72,5 +83,5 @@ export const useQueryStore = defineStore('query', () => {
   const cacheQueries = computed<FormattedQuery[]>(() => queries.value.filter((obj):boolean => (obj.type === 'cache')));
 
 
-  return { queries, addNewQuery, endQueries, cacheQueries, setSelection, setHoverSelection, selection, hoverSelection, addPageStartTime, lastEndTime, groupedQueries}
+  return { keys, queries, addNewQuery, endQueries, cacheQueries, setSelection, setHoverSelection, selection, hoverSelection, addPageStartTime, lastEndTime, groupedQueries }
 })

@@ -1,0 +1,51 @@
+/* highlight.js styles */
+
+.vue-dd .hljs {
+  color: #abb2bf;
+  background: #282c34;
+}
+
+.vue-dd .hljs-comment, .vue-dd .hljs-quote {
+  color: #5c6370;
+  font-style: italic;
+}
+
+.vue-dd .hljs-doctag, .vue-dd .hljs-formula, .vue-dd .hljs-keyword {
+  color: #c678dd;
+}
+
+.vue-dd .hljs-deletion, .vue-dd .hljs-name, .vue-dd .hljs-section, .vue-dd .hljs-selector-tag, .vue-dd .hljs-subst {
+  color: #e06c75;
+}
+
+.vue-dd .hljs-literal {
+  color: #56b6c2;
+}
+
+.vue-dd .hljs-addition, .vue-dd .hljs-attribute, .vue-dd .hljs-meta .hljs-string, .vue-dd .hljs-regexp, .vue-dd .hljs-string {
+  color: #98c379;
+}
+
+.vue-dd .hljs-attr, .vue-dd .hljs-number, .vue-dd .hljs-selector-attr, .vue-dd .hljs-selector-class, .vue-dd .hljs-selector-pseudo, .vue-dd .hljs-template-variable, .vue-dd .hljs-type, .vue-dd .hljs-variable {
+  color: #d19a66;
+}
+
+.vue-dd .hljs-bullet, .vue-dd .hljs-link, .vue-dd .hljs-meta, .vue-dd .hljs-selector-id, .vue-dd .hljs-symbol, .vue-dd .hljs-title {
+  color: #61aeee;
+}
+
+.vue-dd .hljs-built_in, .vue-dd .hljs-class .hljs-title, .vue-dd .hljs-title.class_ {
+  color: #e6c07b;
+}
+
+.vue-dd .hljs-emphasis {
+  font-style: italic;
+}
+
+.vue-dd .hljs-strong {
+  font-weight: 700;
+}
+
+.vue-dd .hljs-link {
+  text-decoration: underline;
+}

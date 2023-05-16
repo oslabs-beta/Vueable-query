@@ -1,80 +1,56 @@
-<template>
-    <svg id="graph" width="250" height="500"></svg>
-</template>
-
-<script lang="ts">
+<script setup>
 import * as d3 from 'd3';
-const dummyData = {
-    'post': [
-        {
-            startTime: 100,
-            endTime: 200,
-            type: 'end'
-        },
-        {
-            startTime: 400,
-            endTime: 400,
-            type: 'cache'
-        }
-    ],
-    'author': [
-        {
-            startTime: 300,
-            endTime: 500,
-            type: 'end'
-        }
-    ]
-}
+import { ref, onMounted, watch } from 'vue';
+import { useQueryStore } from '../store';
 
-const svg = d3.select('#graph');
+const store = useQueryStore();
 
-const maxEndTime = function() {
-    const cache = [];
-    for (const queryKey in dummyData) {
-        dummyData[queryKey].forEach(query => {
-            cache.push(query.endTime);
+const width = ref(500); // dynamic width and height
+const height = ref(250); // dynamic width and height
+
+
+const refreshGraph = () => {
+    console.log('h and w are :', width.value, height.value)
+    d3.selectAll('.query').remove();
+    d3.selectAll('.tick').remove();
+    d3.selectAll('.domain').remove();
+    const svg = d3.select('#graph');
+    const x = d3.scaleLinear()
+        .domain([0, store.lastEndTime])
+        .range([0, width.value]);
+
+    const y = d3.scaleBand()
+        .domain(store.keys)
+        .range([0, height.value]);
+
+    svg.append('g')
+        .call(d3.axisLeft(y));
+
+    svg.append('g')
+        .call(d3.axisBottom(x));
+
+    svg.selectAll('.query')
+        .data(store.queries)
+        .enter()
+        .append('rect')
+        .attr('x', function(d) {
+            return x(d.startTime);
         })
-    }
-    return Math.max(...cache);
-}
-
-function cleanData(data) {
-    const cache = [];
-    for (const queryKey in data) {
-        data[queryKey].forEach(query => {
-            cache.push({...query, queryHash: queryKey })
+        .attr('y', function(d) {
+            return y(d.queryHash);
         })
-    }
-    return cache;
+        .attr('width', function(d) {
+            return (x(d.endTime) - x(d.startTime)) || 2;
+        })
+        .classed('query', true)
+        .attr('height', 10)
+        .attr('fill', 'blue')
 }
 
-const x = d3.scaleLinear()
-    .domain([0, maxEndTime()])
-    .range([0, sq]);
-
-const y = d3.scaleBand()
-    .domain(Object.keys(dummyData))
-    .range([0, sq]);
-
-svg.append('g')
-    .call(d3.axisLeft(y));
-
-svg.append('g')
-    .call(d3.axisBottom(x));
-
-svg.selectAll('.query')
-    .data(cleanData(dummyData))
-    .enter()
-    .append('rect')
-    .attr('x', function(d) {
-        return x(d.startTime);
-    })
-    .attr('y', function(d) {
-        return y(d.queryHash);
-    })
-    .attr('width', function(d) {
-        return (x(d.endTime) - x(d.startTime)) || 2;
-    })
-    .attr('height', 50)
-    .attr('fill', 'blue')
+watch(() => store.queries, refreshGraph)
 </script>
+
+<template>
+    
+    <svg id="graph" :width="width" :height="height"></svg>
+</template>
