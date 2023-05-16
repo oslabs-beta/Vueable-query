@@ -51,12 +51,6 @@
 </template>
 
 <style scoped>
-  #text-panel {
-    height: 25rem;
-    width: 40rem;
-    border-style: solid;
-    overflow: scroll;
-  }
  .query-text:hover {
     cursor: pointer;
     /* background-color: rgba(0, 255, 255, 0.25); */

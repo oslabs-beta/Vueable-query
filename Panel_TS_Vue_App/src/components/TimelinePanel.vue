@@ -30,12 +30,6 @@ import { useQueryStore } from '../store';
 </template>
 
 <style scoped>
-  #timeline-panel {
-    height: 25rem;
-    width: 40rem;
-    border-style: solid;
-    overflow: scroll;
-  }
   .query-timeline:hover {
     cursor: pointer;
     /* background-color: rgba(0, 255, 255, 0.26); */
