@@ -4,6 +4,14 @@ const queryCache = queryClient.getQueryCache();
 //querystorage holds the start time value at the key queryHash
 
 const defaultStart = Date.now();
+//send message with the default start time
+window.postMessage({
+  source: 'vueable-query-extension',
+  payload: {
+    startTime: defaultStart,
+    type: 'pageStartTime'
+  }
+});
 
 const queryStorage = new Map();
 const callback = (event) => {
@@ -11,7 +19,7 @@ const callback = (event) => {
   if(event.type === 'added'){
     // record start time
     queryStorage.set(event.query.queryHash, [Date.now(), ])
-    messageWindow({ event, startTime: queryStorage.get(event.query.queryHash)[0], endTime: undefined, type: 'start' } );
+    // messageWindow({ event, startTime: queryStorage.get(event.query.queryHash)[0], endTime: undefined, type: 'start' } );
   } else if((event.type === 'updated' && event.action.type === 'success')){
     let startTime, endTime;
     if(queryStorage.has(event.query.queryHash)){

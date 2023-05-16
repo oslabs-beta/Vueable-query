@@ -6,15 +6,31 @@ const storeQuery = useQueryStore();
 </script>
 
 <template>
-  <div>
+  <div class="container">
     <TimelinePanel />
     <TextPanel />
   </div>
 </template>
 
-<style scoped>
-  #sent-message-test {
-    width: 50px;
-    height:25px;
+<style>
+  .container{
+    --margin: 10px;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 2 * var(--margin));
+    width: 100%;
+    justify-content: center;
   }
+  
+  #timeline-panel, 
+  #text-panel {
+    height: 50%;
+    flex-grow: 1;
+    overflow: auto;
+    padding: 10px;
+    min-width: 380px;
+    border-style: solid;
+  }
+
+
 </style>
