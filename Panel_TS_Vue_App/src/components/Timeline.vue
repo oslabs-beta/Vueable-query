@@ -71,7 +71,41 @@ const refreshGraph = () => {
         })
         .classed('query', true)
         .attr('height', queryHeight)
-        .attr('fill', 'blue')
+        .attr('fill', (d) => {
+            if (d.originalIndex === store.selection) {
+                return 'yellow';
+            } else if (d.originalIndex === store.hoverSelection) {
+                return 'aqua';
+            } else return 'blue';
+        })
+        .on('mouseover', (e, d) => {
+            console.log('mouseover');
+            d3.select(this).style("cursor", "pointer");
+            store.setHoverSelection(d.originalIndex)
+        })
+        .on("mouseout", () => {
+            console.log('mouseout');
+            d3.select(this).style("cursor", "");
+            store.setHoverSelection(-1);
+        })
+        .on("click", (e, d) => {
+            console.log('clicked');
+            store.setSelection(d.originalIndex);
+        })
+                
+
+                
+        // .on({
+        //     "mouseover": (e, d) => {
+        //         console.log('mouseover');
+        //         store.setHoverSelection(d.originalIndex)},
+        //     "mouseout": () => {
+        //         console.log('mouseout');
+        //         store.setHoverSelection(-1)},
+        //     "click": (e, d) => {
+        //         console.log('clicked');
+        //         store.setSelection(d.originalIndex)}
+        // })
 
         // .on({
         //   "mouseover": function() { /* do stuff */ },
@@ -87,9 +121,24 @@ const refreshGraph = () => {
 }
 
 watch(() => store.queries, refreshGraph)
+watch(() => store.selection, refreshGraph)
+watch(() => store.hoverSelection, refreshGraph)
+
 </script>
 
 <template>
     <div id="graph"></div>
 <!-- <svg id="graph" :width="width" :height="height"></svg> -->
 </template>
+
+<style scoped>
+    rect{
+        cursor: pointer;
+    }
+
+    .query{
+        cursor: pointer;
+    }
+
+    
+</style>
