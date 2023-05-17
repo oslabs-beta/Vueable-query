@@ -13,6 +13,7 @@ import { useQueryStore } from './store'
 const store = useQueryStore();
 
 // Create a connection to the service worker
+// @ts-ignore : chrome global
 const backgroundPageConnection = chrome.runtime.connect({
   name: "panel"
 });
@@ -20,6 +21,7 @@ const backgroundPageConnection = chrome.runtime.connect({
 // report back with tabId to identify devtools location in chrome
 backgroundPageConnection.postMessage({
   name: 'init',
+  // @ts-ignore : chrome global
   tabId: chrome.devtools.inspectedWindow.tabId
 });
 
