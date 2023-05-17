@@ -31,13 +31,12 @@ backgroundPageConnection.postMessage({
 backgroundPageConnection.onMessage.addListener((message: Message) => {
   console.log('got a message in main.ts: ', message)
   const { startTime, endTime, type, event } = message.payload;
-  if(type === 'pageStartTime'){
+  if(type === 'pageStartTime') {
     store.addPageStartTime(message.payload.startTime)
-  }
-  else{
+  } else if (type === 'resetHistory') {
+    store.resetHistory();
+  } else {
     console.log('main.ts: message received at its destination!', startTime, endTime, type, event.query.queryHash, message);
     store.addNewQuery(message);
   }
-    
-
 });
