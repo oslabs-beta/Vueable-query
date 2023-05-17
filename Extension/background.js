@@ -52,13 +52,26 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
 // when a tab closes, if it's the tab with active history, clear history
 chrome.tabs.onRemoved.addListener(
-  (tabId) => {
-    if (tabId === currentTabId){
-      wipeHistory();
+  (tabId) => refreshHistoryConditionally(tabId, currentTabId)
+);
+
+/* when navigating to the page for any reason, if it's the tab with active */
+/* history, clear history; this conditional includes reload. */
+/* May want to always refresh history on any kind of re-access and replace */
+/* onRemoved? */
+chrome.webNavigation.onCommitted.addListener(
+  ({ tabId, transitionType }) => {
+    if (['reload'].includes(transitionType)) {
+      refreshHistoryConditionally(tabId, currentTabId)
     }
   }
-)
+);
 
-function wipeHistory () {
-  history = [];
+function refreshHistoryConditionally (tabId, currentTabId) {
+  if (tabId === currentTabId) {
+    console.log('wiping history');
+    history = [];
+    // send message to devTool store to reset
+    // could also reset startTime
+  }
 }

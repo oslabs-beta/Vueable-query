@@ -10,7 +10,8 @@
   },
   "devtools_page": "devtools.html",
   "permissions": [
-    "tabs"
+    "tabs",
+    "webNavigation"
   ], 
   "web_accessible_resources": [{
     "resources": ["script.js"],
