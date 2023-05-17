@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@tanstack/vue-query": "^4.29.5",
+    "d3": "^7.8.4",
+    "vite": "^4.3.5",
+    "vue": "^3.2.47",
+    "vue-dd": "^1.5.0"
+  }
+}
