@@ -27,6 +27,7 @@ export const useQueryStore = defineStore('query', () => {
 
   function addNewQuery(message: Message) {
     data.value.push(message);
+    console.log('added message to store', data.value);
   }
 
   function setSelection(index: number) {
