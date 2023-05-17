@@ -3,9 +3,9 @@ let history = [];
 let currentTabId;
 
 // when a tab closes, if it's the tab with active history, clear history
-//chrome.tabs.onRemoved.addListener(
-//  (tabId) => refreshHistoryConditionally(tabId, currentTabId)
-//);
+chrome.tabs.onRemoved.addListener(
+  (tabId) => refreshHistoryConditionally(tabId, currentTabId)
+);
 
 /* when navigating to the page for any reason, if it's the tab with active */
 /* history, clear history; this conditional includes reload. */
@@ -27,7 +27,7 @@ chrome.runtime.onConnect.addListener(function (port) {
       if (message.name == "init") {
         currentTabId = message.tabId;
         connections[message.tabId] = port;
-        console.log('Sending history over for new connection', history)
+//        console.log('Sending history over for new connection', history)
         history.forEach((request) => {
           connections[message.tabId].postMessage(request);
         });
@@ -58,7 +58,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (sender.tab) {
       const tabId = sender.tab.id;
       if (tabId in connections) {
-        console.log("Background.js: posting message to devtool panel", history);
+//        console.log("Background.js: posting message to devtool panel", history);
         connections[tabId].postMessage(request);
       } else {
         console.log("Tab not found in connection list.");
@@ -71,10 +71,17 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
 function refreshHistoryConditionally (tabId, currentTabId) {
   if (tabId === currentTabId) {
-    console.log('wiping history, of', history);
+//    console.log('wiping history, of', history);
     history = [];
-    console.log('wiped to:', history)
+//    console.log('wiped to:', history)
     // send message to devTool store to reset
     // could also reset startTime
+    connections[tabId].postMessage({
+      source: 'vueable-query-extension',
+      payload: {
+        startTime: Date.now(),
+        type: 'resetHistory',
+      }
+    });
   }
 }
