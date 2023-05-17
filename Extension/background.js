@@ -54,7 +54,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 chrome.tabs.onRemoved.addListener(
   (tabId) => {
     if (tabId === currentTabId){
-      history = [];
+      wipeHistory();
     }
   }
 )
+
+function wipeHistory () {
+  history = [];
+}
