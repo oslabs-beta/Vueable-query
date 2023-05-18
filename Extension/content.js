@@ -27,7 +27,11 @@ function afterDOMLoaded(){
     }
     // forward message to background.js
     // console.log('content.js received from script.js:', message);
-    chrome.runtime.sendMessage(message);
+    try{
+      chrome.runtime.sendMessage(message).catch(()=> console.log('Message has no response, please refresh the page'));
+    } catch{
+      console.log('Extension context invalidated, please refresh the page')
+    }
   });
 }
 

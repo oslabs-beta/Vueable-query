@@ -13,6 +13,7 @@ import { useQueryStore } from './store'
 const store = useQueryStore();
 
 // Create a connection to the service worker
+// @ts-ignore : chrome global
 const backgroundPageConnection = chrome.runtime.connect({
   name: "panel"
 });
@@ -20,6 +21,7 @@ const backgroundPageConnection = chrome.runtime.connect({
 // report back with tabId to identify devtools location in chrome
 backgroundPageConnection.postMessage({
   name: 'init',
+  // @ts-ignore : chrome global
   tabId: chrome.devtools.inspectedWindow.tabId
 });
 
@@ -29,13 +31,12 @@ backgroundPageConnection.postMessage({
 backgroundPageConnection.onMessage.addListener((message: Message) => {
   console.log('got a message in main.ts: ', message)
   const { startTime, endTime, type, event } = message.payload;
-  if(type === 'pageStartTime'){
+  if(type === 'pageStartTime') {
     store.addPageStartTime(message.payload.startTime)
-  }
-  else{
+  } else if (type === 'resetHistory') {
+    store.resetHistory();
+  } else {
     console.log('main.ts: message received at its destination!', startTime, endTime, type, event.query.queryHash, message);
     store.addNewQuery(message);
   }
-    
-
 });
