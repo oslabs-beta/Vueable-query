@@ -43,14 +43,18 @@ const refreshGraph = () => {
         .domain([0, store.lastEndTime])
         .range([0, width.value]);
 
+    
     //y axis
     const y = d3.scaleBand()
         .domain(store.keys)
         .range([0, height.value]);
 
-    svg.append('g')
+    const yAxis = svg.append('g')
         .call(d3.axisLeft(y))
         // .attr('transform', `translate(-10, 0)`)
+
+    yAxis.selectAll(".tick text")
+     .attr("fill","#F45B69")
 
     svg.append('g')
         .call(d3.axisTop(x));
@@ -72,10 +76,10 @@ const refreshGraph = () => {
         .attr('height', queryHeight)
         .attr('fill', (d) => {
             if (d.originalIndex === store.selection) {
-                return 'yellow';
+                return '#E4FDE1';
             } else if (d.originalIndex === store.hoverSelection) {
-                return 'aqua';
-            } else return 'blue';
+                return '#028090';
+            } else return '#F45B69';
         })
         .on('mouseover', (e, d) => {
             console.log('mouseover');
@@ -108,13 +112,15 @@ watch(() => store.hoverSelection, refreshGraph)
     rect{
         cursor: pointer;
     }
-
+    /* .tick text {
+        fill: #F45B69;
+    } */
     .query{
         cursor: pointer;
     }
 </style>
 
-svg.selectAll('.query')
+<!-- svg.selectAll('.query')
     .data(cleanData(dummyData))
     .enter()
     .append('rect')
@@ -128,5 +134,5 @@ svg.selectAll('.query')
         return (x(d.endTime) - x(d.startTime)) || 2;
     })
     .attr('height', 50)
-    .attr('fill', 'blue')
-</script>
+    .attr('fill', 'blue') -->
+<!-- </script> --> 

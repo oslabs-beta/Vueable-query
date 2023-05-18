@@ -6,7 +6,7 @@ import Timeline from './Timeline.vue';
 
 <template>
   <div id="timeline-panel">
-    <h2>TimeLine: end time is {{  store.lastEndTime }}</h2> 
+    <h2>Query Timeline</h2> 
 
     <!-- <div
       v-for="(queryList, queryHash) in store.groupedQueries"
@@ -35,8 +35,19 @@ import Timeline from './Timeline.vue';
     cursor: pointer;
     background-color: rgba(0, 255, 255, 0.26);
   } */
+  #timeline-panel {
+    background-color: rgb(45, 45, 45);
+    color: white;
+  }
   .queryBox {
     width: fit-content;
     border-style: solid;
+  }
+
+  h2 {
+    font-family: 'Cormorant Garamond', serif;
+    text-align: center;
+    font-weight: 700;
+    font-size: 20px;
   }
 </style>
