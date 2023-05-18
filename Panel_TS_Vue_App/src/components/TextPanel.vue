@@ -87,10 +87,6 @@
 
   .hash {
     color: #F45B69;
-    /* filter: saturate(2); */
   }
-/* 
-  .text-panel-object {
-    
-  } */
+
 </style>

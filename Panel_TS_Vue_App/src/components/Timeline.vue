@@ -112,27 +112,7 @@ watch(() => store.hoverSelection, refreshGraph)
     rect{
         cursor: pointer;
     }
-    /* .tick text {
-        fill: #F45B69;
-    } */
     .query{
         cursor: pointer;
     }
 </style>
-
-<!-- svg.selectAll('.query')
-    .data(cleanData(dummyData))
-    .enter()
-    .append('rect')
-    .attr('x', function(d) {
-        return x(d.startTime);
-    })
-    .attr('y', function(d) {
-        return y(d.queryHash);
-    })
-    .attr('width', function(d) {
-        return (x(d.endTime) - x(d.startTime)) || 2;
-    })
-    .attr('height', 50)
-    .attr('fill', 'blue') -->
-<!-- </script> --> 

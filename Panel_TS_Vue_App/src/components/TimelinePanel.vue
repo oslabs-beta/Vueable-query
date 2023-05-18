@@ -31,10 +31,6 @@ import Timeline from './Timeline.vue';
 </template>
 
 <style scoped>
-  /* .query-timeline:hover {
-    cursor: pointer;
-    background-color: rgba(0, 255, 255, 0.26);
-  } */
   #timeline-panel {
     background-color: rgb(45, 45, 45);
     color: white;
