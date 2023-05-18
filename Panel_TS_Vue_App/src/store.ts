@@ -16,17 +16,21 @@ export const useQueryStore = defineStore('query', () => {
   const lastEndTime = computed<number>(()=>{
     //in the case that there is no queries yet
     if(data.value.length === 0) return 0;
-    console.log('lastEndTime: ', data.value[data.value.length - 1].payload.endTime - pageStartTime.value)
+//    console.log('lastEndTime: ', data.value[data.value.length - 1].payload.endTime - pageStartTime.value)
     return data.value[data.value.length - 1].payload.endTime - pageStartTime.value;
   })
 
   function addPageStartTime(time: number) {
     pageStartTime.value = time;
-    console.log('pageStartTime: ', pageStartTime.value)
+//    console.log('pageStartTime: ', pageStartTime.value)
   }
 
   function addNewQuery(message: Message) {
     data.value.push(message);
+  }
+
+  function resetHistory(): void {
+    data.value = [];
   }
 
   function setSelection(index: number) {
@@ -62,7 +66,7 @@ export const useQueryStore = defineStore('query', () => {
       }
       result[q.queryHash].push(q);
     })
-    return result
+    return result;
   })
 
   const keys = computed<string[]>(() => {
@@ -73,7 +77,7 @@ export const useQueryStore = defineStore('query', () => {
         result.push(q.queryHash)
       }
     })
-    return result
+    return result;
   })
   
   //filter by end
@@ -83,5 +87,5 @@ export const useQueryStore = defineStore('query', () => {
   const cacheQueries = computed<FormattedQuery[]>(() => queries.value.filter((obj):boolean => (obj.type === 'cache')));
 
 
-  return { keys, queries, addNewQuery, endQueries, cacheQueries, setSelection, setHoverSelection, selection, hoverSelection, addPageStartTime, lastEndTime, groupedQueries }
+  return { keys, queries, addNewQuery, resetHistory, endQueries, cacheQueries, setSelection, setHoverSelection, selection, hoverSelection, addPageStartTime, lastEndTime, groupedQueries }
 })

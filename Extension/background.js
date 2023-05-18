@@ -1,6 +1,24 @@
 const connections = {};
 let history = [];
 let currentTabId;
+
+// when a tab closes, if it's the tab with active history, clear history
+chrome.tabs.onRemoved.addListener(
+  (tabId) => refreshHistoryConditionally(tabId, currentTabId)
+);
+
+/* when navigating to the page for any reason, if it's the tab with active */
+/* history, clear history; this conditional includes reload. */
+/* May want to always refresh history on any kind of re-access and replace */
+/* onRemoved? */
+chrome.webNavigation.onCommitted.addListener(
+  ({ tabId, transitionType }) => {
+    if (['reload'].includes(transitionType)) {
+      refreshHistoryConditionally(tabId, currentTabId)
+    }
+  }
+);
+
 chrome.runtime.onConnect.addListener(function (port) {
     console.log('On connect add listener')
     const extensionListener = function (message, sender, sendResponse) {
@@ -9,7 +27,7 @@ chrome.runtime.onConnect.addListener(function (port) {
       if (message.name == "init") {
         currentTabId = message.tabId;
         connections[message.tabId] = port;
-        console.log('Sending history over for new connection')
+//        console.log('Sending history over for new connection', history)
         history.forEach((request) => {
           connections[message.tabId].postMessage(request);
         });
@@ -31,6 +49,7 @@ chrome.runtime.onConnect.addListener(function (port) {
         }
     });
 });
+
 // Receive message from content script and relay to the devTools page for the current tab
 // content.js -> here -> devtool panel
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
@@ -39,7 +58,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (sender.tab) {
       const tabId = sender.tab.id;
       if (tabId in connections) {
-        // console.log("Background.js: posting message to devtool panel");
+//        console.log("Background.js: posting message to devtool panel", history);
         connections[tabId].postMessage(request);
       } else {
         console.log("Tab not found in connection list.");
@@ -50,11 +69,19 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     return true;
 });
 
-// when a tab closes, if it's the tab with active history, clear history
-chrome.tabs.onRemoved.addListener(
-  (tabId) => {
-    if (tabId === currentTabId){
-      history = [];
-    }
+function refreshHistoryConditionally (tabId, currentTabId) {
+  if (tabId === currentTabId) {
+//    console.log('wiping history, of', history);
+    history = [];
+//    console.log('wiped to:', history)
+    // send message to devTool store to reset
+    // could also reset startTime
+    connections[tabId].postMessage({
+      source: 'vueable-query-extension',
+      payload: {
+        startTime: Date.now(),
+        type: 'resetHistory',
+      }
+    });
   }
-)
+}
