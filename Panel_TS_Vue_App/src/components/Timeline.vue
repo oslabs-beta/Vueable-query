@@ -14,7 +14,7 @@ const margins = ref({
 });
 
 const rawWidth = ref(500); // dynamic width and height
-const rawHeight = ref(300); // dynamic width and height //increased height from 200-300
+const rawHeight = ref(300); // dynamic width and height //increased raw height height from 250-300
 
 const width = computed(() => rawWidth.value - margins.value.left - margins.value.right)
 const height = computed(() => rawHeight.value - margins.value.top - margins.value.bottom)
@@ -43,7 +43,7 @@ const refreshGraph = () => {
     // x axis
     const x = d3.scaleLinear()
         .domain([0, store.lastEndTime])
-        .range([0, width.value]); //shorten the range of the x axis to fit the axis title
+        .range([0, width.value]); 
     
     // y axis
     const y = d3.scaleBand()
@@ -52,38 +52,34 @@ const refreshGraph = () => {
 
     const yAxis = svg.append('g')
         .call(d3.axisLeft(y))
-        // .attr('transform', `translate(-10, 0)`)
+        .append("text")
+            .attr("class", "y-title")
+            .attr("transform", "rotate(-90)") //rotate y-axis title vertically
+            .attr("text-anchor", "end") //signify that this y-axis title will position itself relative to the end of its div
+            .attr("y",  -margins.value.left / 2 - margins.value.right) //position y-axis title relative to the midpoint of the y-axis
+            .attr("x", -margins.value.left / 2) //position the y-axis title left of the y-axis labels
+            .text("Query Hashes")
+            .attr('fill','white')
+            .attr('fill','white')
+            .attr('font-weight', '700')
+            .attr('font-size', '17px')
 
     yAxis.selectAll(".tick text")
      .attr("fill","#F45B69")
 
     svg.append('g')
-        .call(d3.axisTop(x));
-
-    //add titles for axis
-    //axis title arent built in so we need to manual add a 'text' element ourselves
-    svg.append("text")
-        .attr("class", "x-title")
-        .attr("text-anchor", "middle") //signify that this x-axis title will position itself relative to the midpoint of its div
-        .attr("x", width.value/2) //position the x-axis title in the middle of the x-axis
-        .attr("y", -margins.value.top/2 - 5) //position the axis title above the x-axis (negative value to move up)
-        .text("Time(ms)")
-        .attr('fill','white')
-        .attr('font-weight', '700')
-        .attr('font-size', '17px')
-
-
-    svg.append("text")
-        .attr("class", "y-title")
-        .attr("transform", "rotate(-90)") //rotate y-axis title vertically
-        .attr("text-anchor", "end") //signify that this y-axis title will position itself relative to the end of its div
-        .attr("y",  -margins.value.left/2 - margins.value.right) //position y-axis title relative to the midpoint of the y-axis
-        .attr("x", -margins.value.left/2) //position the y-axis title left of the y-axis labels
-        .text("Query Hashes")
-        .attr('fill','white')
-        .attr('fill','white')
-        .attr('font-weight', '700')
-        .attr('font-size', '17px')
+        .call(d3.axisTop(x))
+        //add titles for x-axis
+        //axis title arent built in so we need to manual add a 'text' element ourselves
+        .append("text")
+            .attr("class", "x-title")
+            .attr("text-anchor", "middle") //signify that this x-axis title will position itself relative to the midpoint of its div
+            .attr("x", width.value/2) //position the x-axis title in the middle of the x-axis
+            .attr("y", -margins.value.top / 2 - 5) //position the axis title above the x-axis (negative value to move up)
+            .text("Time(ms)")
+            .attr('fill','white')
+            .attr('font-weight', '700')
+            .attr('font-size', '17px')
 
     svg.selectAll('.query')
         .data(store.queries)
