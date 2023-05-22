@@ -1,10 +1,12 @@
 // content injects script to window, forwards messages to background.js, then background forwards them to devtool.js
 const connections = {};
 let history = [];
+const histories = {};
 let currentTabId;
 
 // when a tab closes, if it's the tab with active history, clear history
 chrome.tabs.onRemoved.addListener(
+  /* TODO refresh */
   (tabId) => refreshHistoryConditionally(tabId, currentTabId)
 );
 
@@ -15,20 +17,20 @@ chrome.tabs.onRemoved.addListener(
 chrome.webNavigation.onCommitted.addListener(
   ({ tabId, transitionType }) => {
     if (['reload'].includes(transitionType)) {
+    /* TODO refresh */
       refreshHistoryConditionally(tabId, currentTabId)
     }
   }
 );
 
 chrome.runtime.onConnect.addListener(function (port) { // listen for new ports
-//    console.log('On connect add listener')
     const extensionListener = function (message, sender, sendResponse) { // listen for messages
       // The original connection event doesn't include the tab ID of the
       // DevTools page, so we need to send it explicitly.
       if (message.name == "init") {
         currentTabId = message.tabId; //assign current tab Id to the tab Id vue query tool is in 
         connections[currentTabId] = port;
-//        console.log('Sending history over for new connection', history)
+        /* TODO seelct appropriate history */
         history.forEach((request) => {
           connections[currentTabId].postMessage(request);
         });
@@ -45,6 +47,7 @@ chrome.runtime.onConnect.addListener(function (port) { // listen for new ports
         for (const i = 0, length = tabs.length; i < length; i++) {
           if (connections[tabs[i]] === port) {
             delete connections[tabs[i]]
+            /* TODO delete history */
             break;
           }
         }
@@ -55,8 +58,11 @@ chrome.runtime.onConnect.addListener(function (port) { // listen for new ports
 // content.js -> here -> devtool panel
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     // Messages from content scripts should have sender.tab set
+  /* TODO specific history push */
+    if (!sender.tab) console.log ('something has gone very wrong');
     history.push(request);
     if (sender.tab) {
+      console.log('tab is in:', sender.tab);
       const tabId = sender.tab.id;
       if (tabId in connections) {
 //        console.log("Background.js: posting message to devtool panel", history);
@@ -72,9 +78,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
 function refreshHistoryConditionally (tabId, currentTabId) {
   if (tabId === currentTabId) {
-//    console.log('wiping history, of', history);
     history = [];
-//    console.log('wiped to:', history)
     // send message to devTool store to reset
     // could also reset startTime
     connections[tabId].postMessage({
