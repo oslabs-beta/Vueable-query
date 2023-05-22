@@ -22,13 +22,15 @@ const height = computed(() => rawHeight.value - margins.value.top - margins.valu
 const queryHeight = 20;
 
 const refreshGraph = () => {
-    // remove old graph
+    // remove old graph, basically everything besides the div
     d3.selectAll('.query').remove();
     d3.selectAll('.tick').remove();
     d3.selectAll('.domain').remove();
     d3.selectAll('.graph').remove();
     
     // define new graph
+    // create svg canvas; add translated point
+    // assign translated point to variable 'svg'
     const svg = d3.select('#graph')
         .append('svg')
         .attr('height', rawHeight.value)
@@ -38,13 +40,12 @@ const refreshGraph = () => {
         .attr('transform', `translate(${margins.value.left}, ${margins.value.top})`)
         .classed('graph', true)
         
-
+    // x axis
     const x = d3.scaleLinear()
         .domain([0, store.lastEndTime])
         .range([0, width.value]);
-
     
-    //y axis
+    // y axis
     const y = d3.scaleBand()
         .domain(store.keys)
         .range([0, height.value]);
@@ -59,21 +60,27 @@ const refreshGraph = () => {
     svg.append('g')
         .call(d3.axisTop(x));
 
+
+
     svg.selectAll('.query')
         .data(store.queries)
+        // entering a data loop, for each query in queries
         .enter()
         .append('rect')
+        //lines 71 and 74 tells where the top left corner of each of the bar lives on the svg
         .attr('x', function(d) {
             return x(d.startTime);
         })
         .attr('y', function(d) {
             return y(d.queryHash) + y.bandwidth() / 2 - queryHeight / 2;
         })
+        //width of the bar for either a query or cache hit
         .attr('width', function(d) {
             return (x(d.endTime) - x(d.startTime)) || 2;
         })
-        .classed('query', true)
+        //fixed height of bar
         .attr('height', queryHeight)
+        .classed('query', true)
         .attr('fill', (d) => {
             if (d.originalIndex === store.selection) {
                 return '#E4FDE1';
@@ -82,17 +89,14 @@ const refreshGraph = () => {
             } else return '#F45B69';
         })
         .on('mouseover', (e, d) => {
-            console.log('mouseover');
             d3.select(this).style("cursor", "pointer");
             store.setHoverSelection(d.originalIndex)
         })
         .on("mouseout", () => {
-            console.log('mouseout');
             d3.select(this).style("cursor", "");
             store.setHoverSelection(-1);
         })
         .on("click", (e, d) => {
-            console.log('clicked');
             store.setSelection(d.originalIndex);
         })
 }
@@ -105,7 +109,6 @@ watch(() => store.hoverSelection, refreshGraph)
 
 <template>
     <div id="graph"></div>
-<!-- <svg id="graph" :width="width" :height="height"></svg> -->
 </template>
 
 <style scoped>

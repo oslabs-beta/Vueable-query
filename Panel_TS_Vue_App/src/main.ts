@@ -14,9 +14,7 @@ const store = useQueryStore();
 
 // Create a connection to the service worker
 // @ts-ignore : chrome global
-const backgroundPageConnection = chrome.runtime.connect({
-  name: "panel"
-});
+const backgroundPageConnection = chrome.runtime.connect();
 
 // report back with tabId to identify devtools location in chrome
 backgroundPageConnection.postMessage({

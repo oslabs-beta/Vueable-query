@@ -1,3 +1,4 @@
+// content injects script to window, forwards messages to background.js, then background forwards them to devtool.js
 const connections = {};
 let history = [];
 let currentTabId;
@@ -19,17 +20,17 @@ chrome.webNavigation.onCommitted.addListener(
   }
 );
 
-chrome.runtime.onConnect.addListener(function (port) {
-    console.log('On connect add listener')
-    const extensionListener = function (message, sender, sendResponse) {
+chrome.runtime.onConnect.addListener(function (port) { // listen for new ports
+//    console.log('On connect add listener')
+    const extensionListener = function (message, sender, sendResponse) { // listen for messages
       // The original connection event doesn't include the tab ID of the
       // DevTools page, so we need to send it explicitly.
       if (message.name == "init") {
-        currentTabId = message.tabId;
-        connections[message.tabId] = port;
+        currentTabId = message.tabId; //assign current tab Id to the tab Id vue query tool is in 
+        connections[currentTabId] = port;
 //        console.log('Sending history over for new connection', history)
         history.forEach((request) => {
-          connections[message.tabId].postMessage(request);
+          connections[currentTabId].postMessage(request);
         });
         return;
       }
@@ -41,8 +42,8 @@ chrome.runtime.onConnect.addListener(function (port) {
     port.onDisconnect.addListener(function(port) {
         port.onMessage.removeListener(extensionListener);
         const tabs = Object.keys(connections);
-        for (const i=0, len=tabs.length; i < len; i++) {
-          if (connections[tabs[i]] == port) {
+        for (const i = 0, length = tabs.length; i < length; i++) {
+          if (connections[tabs[i]] === port) {
             delete connections[tabs[i]]
             break;
           }

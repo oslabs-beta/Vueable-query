@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import TextPanel from './components/TextPanel.vue'
 import TimelinePanel from './components/TimelinePanel.vue'
-import { useQueryStore } from './store';
-const storeQuery = useQueryStore();
+import TextPanel from './components/TextPanel.vue'
 </script>
 
 <template>
@@ -31,6 +29,4 @@ const storeQuery = useQueryStore();
     min-width: 380px;
     border-style: solid;
   }
-
-
 </style>
