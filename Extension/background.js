@@ -36,7 +36,7 @@ chrome.runtime.onConnect.addListener(function (port) { // listen for new ports
   port.onDisconnect.addListener(function(port) {
       port.onMessage.removeListener(extensionListener);
       const tabs = Object.keys(connections);
-      for (const i = 0, length = tabs.length; i < length; i++) {
+      for (let i = 0, length = tabs.length; i < length; i++) {
         if (connections[tabs[i]] === port) {
           delete connections[tabs[i]]
           break;
@@ -53,7 +53,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     const tabId = sender.tab.id;
     if (!histories.hasOwnProperty(tabId)) histories[tabId] = [];
     histories[tabId].push(request);
-    if (tabId in connections) {
+    if (connections.hasOwnProperty(tabId)) {
       connections[tabId].postMessage(request);
     } else {
       console.log("Tab not found in connection list.");
@@ -65,16 +65,18 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 });
 
 function refreshHistoryConditionally (tabId) {
-  if (Object.hasOwnProperty(tabId)) {
+  if (histories.hasOwnProperty(tabId)) {
     histories[tabId] = [];
     // send message to devTool store to reset
     // could also reset startTime
-    connections[tabId].postMessage({
-      source: 'vueable-query-extension',
-      payload: {
-        startTime: Date.now(),
-        type: 'resetHistory',
-      }
-    });
+    if (connections.hasOwnProperty(tabId)) {
+      connections[tabId].postMessage({
+        source: 'vueable-query-extension',
+        payload: {
+          startTime: Date.now(),
+          type: 'resetHistory',
+        }
+      });
+    }
   }
 }
