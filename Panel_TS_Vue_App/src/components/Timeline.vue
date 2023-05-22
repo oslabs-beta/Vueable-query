@@ -59,6 +59,25 @@ const refreshGraph = () => {
     svg.append('g')
         .call(d3.axisTop(x));
 
+    //add labels for axis
+    svg.append("text")
+        .attr("class", "x label")
+        .attr("text-anchor", "end")
+        .attr("x", -width )
+        .attr("y", height)
+        .text("Time(ms)")
+        .attr('fill','white');
+
+
+    // svg.append("text")
+    //     .attr("class", "y label")
+    //     .attr("text-anchor", "end")
+    //     .attr("y", -height)
+    //     // .attr("dy",  margins.value.bottom)
+    //     // .attr("transform", "rotate(-90)")
+    //     .text("Query Hashes")
+    //     .attr('fill','white');
+
     svg.selectAll('.query')
         .data(store.queries)
         .enter()
