@@ -7,14 +7,14 @@ const store = useQueryStore();
 
 //margins
 const margins = ref({
-    top: 25,
+    top: 50,
     right: 10,
     bottom: 10,
     left: 100
 });
 
 const rawWidth = ref(500); // dynamic width and height
-const rawHeight = ref(250); // dynamic width and height
+const rawHeight = ref(300); // dynamic width and height //increased height from 200-300
 
 const width = computed(() => rawWidth.value - margins.value.left - margins.value.right)
 const height = computed(() => rawHeight.value - margins.value.top - margins.value.bottom)
@@ -43,7 +43,7 @@ const refreshGraph = () => {
     // x axis
     const x = d3.scaleLinear()
         .domain([0, store.lastEndTime])
-        .range([0, width.value]);
+        .range([0, width.value]); //shorten the range of the x axis to fit the axis title
     
     // y axis
     const y = d3.scaleBand()
@@ -60,31 +60,37 @@ const refreshGraph = () => {
     svg.append('g')
         .call(d3.axisTop(x));
 
-    //add labels for axis
+    //add titles for axis
+    //axis title arent built in so we need to manual add a 'text' element ourselves
     svg.append("text")
-        .attr("class", "x label")
-        .attr("text-anchor", "end")
-        .attr("x", -width )
-        .attr("y", height)
+        .attr("class", "x-title")
+        .attr("text-anchor", "middle") //signify that this x-axis title will position itself relative to the midpoint of its div
+        .attr("x", width.value/2) //position the x-axis title in the middle of the x-axis
+        .attr("y", -margins.value.top/2 - 5) //position the axis title above the x-axis (negative value to move up)
         .text("Time(ms)")
-        .attr('fill','white');
+        .attr('fill','white')
+        .attr('font-weight', '700')
+        .attr('font-size', '17px')
 
 
-    // svg.append("text")
-    //     .attr("class", "y label")
-    //     .attr("text-anchor", "end")
-    //     .attr("y", -height)
-    //     // .attr("dy",  margins.value.bottom)
-    //     // .attr("transform", "rotate(-90)")
-    //     .text("Query Hashes")
-    //     .attr('fill','white');
+    svg.append("text")
+        .attr("class", "y-title")
+        .attr("transform", "rotate(-90)") //rotate y-axis title vertically
+        .attr("text-anchor", "end") //signify that this y-axis title will position itself relative to the end of its div
+        .attr("y",  -margins.value.left/2 - margins.value.right) //position y-axis title relative to the midpoint of the y-axis
+        .attr("x", -margins.value.left/2) //position the y-axis title left of the y-axis labels
+        .text("Query Hashes")
+        .attr('fill','white')
+        .attr('fill','white')
+        .attr('font-weight', '700')
+        .attr('font-size', '17px')
 
     svg.selectAll('.query')
         .data(store.queries)
         // entering a data loop, for each query in queries
         .enter()
         .append('rect')
-        //lines 71 and 74 tells where the top left corner of each of the bar lives on the svg
+        //lines 71 and 74 tells where the top left corner of each of the bar lives on the x-axis
         .attr('x', function(d) {
             return x(d.startTime);
         })
