@@ -1,5 +1,5 @@
 if(!(window.__VUE__)){ // check if Vue is running
-  console.error('Vueable Query Error: Vue app not detected');
+  console.log('Vueable Query Error: Vue app not detected');
 } else if(getQueryClient()) { // check if Tanstack Query is running
   console.log('Vueable Query: Tanstack Query client found');
   
@@ -98,7 +98,7 @@ function getQueryClient () {
     const queryClient = el.__vue_app__._context.app._context.provides.VUE_QUERY_CLIENT;
     return queryClient;
   } catch {
-    console.error('Vueable Query Error: Tanstack Query Client not detected');
+    console.log('Vueable Query Error: Tanstack Query Client not detected');
     return false;
   }
 }
