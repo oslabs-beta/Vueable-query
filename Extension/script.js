@@ -85,6 +85,7 @@ if(!(window.__VUE__)){ // check if Vue is running
 
 function getQueryClient () {
   try{
+    // iterate through document elements, looking for __vue_app__ prop
     const all = document.querySelectorAll('*')
     let el
     for (let i = 0; i < all.length; i++) {
@@ -93,6 +94,7 @@ function getQueryClient () {
         break
       }
     }
+    // try to access Vue query client
     const queryClient = el.__vue_app__._context.app._context.provides.VUE_QUERY_CLIENT;
     return queryClient;
   } catch {
