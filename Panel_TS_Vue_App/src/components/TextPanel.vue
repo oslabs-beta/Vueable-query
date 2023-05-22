@@ -1,8 +1,7 @@
 <script setup lang="ts">
   import { useQueryStore } from '../store';
-  import { VueDd } from 'vue-dd'
+  import { VueDd } from 'vue-dd';
   const store = useQueryStore(); 
-  console.log('in vue component!')
 
 //  (Map of divs) (establish this after v-for?)
 //  watch(store.selection, () => {
@@ -14,45 +13,60 @@
 
 <template>
   <div id="text-panel">
-      <!-- if queryHash matches the queryHash of the last element in the storeQuery.textArray, highlight it -->
-
+    <!-- if queryHash matches the queryHash of the last element in the storeQuery.textArray, highlight it -->
     <div
       v-for="(q) in store.endQueries"
       :key="q.queryHash"
-      >
+    >
       <!-- if end query selected, make below div highlighted -->
       <div
-      @mouseover="store.setHoverSelection(q.originalIndex)"
-      @mouseleave="store.setHoverSelection(-1)"
-      @click="store.setSelection(q.originalIndex)"
-      v-bind:style="q.originalIndex === store.selection ? {backgroundColor :'#E4FDE1', color: 'rgb(45, 45, 45)'} : (q.originalIndex === store.hoverSelection ? {backgroundColor :'#028090', color: 'white'} : {})"      
-      class="query-text"  
+        @mouseover="store.setHoverSelection(q.originalIndex)"
+        @mouseleave="store.setHoverSelection(-1)"
+        @click="store.setSelection(q.originalIndex)"
+        v-bind:style="q.originalIndex === store.selection 
+          ? {backgroundColor :'#E4FDE1', color: 'rgb(45, 45, 45)'} 
+          : (q.originalIndex === store.hoverSelection 
+            ? {backgroundColor :'#028090', color: 'white'} 
+            : {})"
+        class="query-text"  
       >
         <span class="query-info">
           Query for key: 
-            <span class="hash">{{ JSON.parse(q.queryHash) }} </span> 
+          <span class="hash">{{ JSON.parse(q.queryHash) }}</span> 
             &emsp;
-          <vue-dd class="text-panel-object" :preview="false" max-width="35%" :dark="false" :model-value="q" /> 
-        </span> <br/>
-        
-
+          <vue-dd
+            class="text-panel-object"
+            :preview="false"
+            max-width="35%"
+            :dark="false"
+            :model-value="q"
+          /> 
+        </span>
+        <br/>
       </div>
       <!-- if cache query selected, make below div highlighted in the v-for -->
       <div
-        v-for="c in store.cacheQueries.filter((obj):boolean=> obj.queryHash === q.queryHash)"
+        v-for="c in store.cacheQueries.filter((obj):boolean => obj.queryHash === q.queryHash)"
         :key="c.queryHash"
-        v-bind:style="c.originalIndex === store.selection ? {backgroundColor :'#E4FDE1', color: 'rgb(45, 45, 45)'} : (c.originalIndex === store.hoverSelection ? {backgroundColor :'#028090', color: 'white'} : {})"        
+       v-bind:style="c.originalIndex === store.selection 
+          ? {backgroundColor :'#E4FDE1', color: 'rgb(45, 45, 45)'} 
+          : (c.originalIndex === store.hoverSelection 
+            ? {backgroundColor :'#028090', color: 'white'} 
+            : {})"        
         @mouseover="store.setHoverSelection(c.originalIndex)"
         @mouseleave="store.setHoverSelection(-1)"
         @click="store.setSelection(c.originalIndex)"
         class="query-text"
       >
-        <span class="cache-info">&emsp; &rarr; Cache hit for key: <span class="hash">{{ JSON.parse(c.queryHash) }}</span> at {{ c.startTime }}ms<br/></span>
+        <span class="cache-info">
+          &emsp; &rarr; Cache hit for key: 
+          <span class="hash">{{ JSON.parse(c.queryHash) }}</span>
+          at {{ c.startTime }}ms
+          <br/>
+        </span>
       </div>
     </div>
-
   </div>
- 
 </template>
 
 <style scoped>
@@ -88,5 +102,4 @@
   .hash {
     color: #F45B69;
   }
-
 </style>
