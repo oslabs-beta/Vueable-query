@@ -1,10 +1,10 @@
 if(!(window.__VUE__)){ // check if Vue is running
-  console.log('Vueable Query Error: Vue app not detected')
+  console.error('Vueable Query Error: Vue app not detected');
 } else if(getQueryClient()) { // check if Tanstack Query is running
-  console.log('Vueable Query: Tanstack Query client found')
+  console.log('Vueable Query: Tanstack Query client found');
   
   //rest of program goes here
-  const queryClient = getQueryClient()
+  const queryClient = getQueryClient();
   //document.getElementById('app').__vue_app__._context.app._context.provides.VUE_QUERY_CLIENT; //extracting queryClient then assign to a constant
   const queryCache = queryClient.getQueryCache(); // central cache that we attach observer to 
 
@@ -86,19 +86,19 @@ if(!(window.__VUE__)){ // check if Vue is running
 function getQueryClient () {
   try{
     // iterate through document elements, looking for __vue_app__ prop
-    const all = document.querySelectorAll('*')
-    let el
+    const all = document.querySelectorAll('*');
+    let el;
     for (let i = 0; i < all.length; i++) {
       if (all[i].__vue_app__) {
         el = all[i];
-        break
+        break;
       }
     }
     // try to access Vue query client
     const queryClient = el.__vue_app__._context.app._context.provides.VUE_QUERY_CLIENT;
     return queryClient;
   } catch {
-    console.log('Vueable Query Error: Tanstack Query Client not detected')
+    console.error('Vueable Query Error: Tanstack Query Client not detected');
     return false;
   }
 }
