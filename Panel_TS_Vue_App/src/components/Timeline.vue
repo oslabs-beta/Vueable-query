@@ -8,12 +8,12 @@ const store = useQueryStore();
 //margins
 const margins = ref({
     top: 50,
-    right: 10,
+    right: 20, //increased margin right from 10 to 20
     bottom: 10,
     left: 100
 });
 
-const rawWidth = ref(500); // dynamic width and height
+const rawWidth = ref(550); // dynamic width and height
 const rawHeight = ref(300); // dynamic width and height //increased raw height height from 250-300
 
 const width = computed(() => rawWidth.value - margins.value.left - margins.value.right)
@@ -39,11 +39,7 @@ const refreshGraph = () => {
         .append('g')
         .attr('transform', `translate(${margins.value.left}, ${margins.value.top})`)
         .classed('graph', true)
-        
-    // x axis
-    const x = d3.scaleLinear()
-        .domain([0, store.lastEndTime])
-        .range([0, width.value]); 
+    
     
     // y axis
     const y = d3.scaleBand()
@@ -67,8 +63,31 @@ const refreshGraph = () => {
     yAxis.selectAll(".tick text")
      .attr("fill","#F45B69")
 
+    // x axis
+    const x = d3.scaleLinear()
+        .domain([0, store.lastEndTime])
+        .range([0, width.value])
+
+    
     svg.append('g')
-        .call(d3.axisTop(x))
+        //dynamically rescale x-axis tick labels
+        .call(d3.axisTop(x).ticks(10).tickFormat((x)=>{
+            //check if ms is over an hour
+            if(x >= 3.6e+6) {
+                return `${(x / 60_000).toPrecision(2)}hr` //convert ms to hr and round to 2 sig figs
+            }
+            //check if current time in ms is greater than a minute
+            else if(x >= 60_000) { //convert ms to min and round to 2 sig figs
+                return `${(x / 60_000).toPrecision(2)}min`
+            } 
+            //check if ms is greater than a second
+            else if (x >= 1_000){ 
+                return `${x / 1_000}s` //convert ms to seconds
+            } 
+            else {
+                return `${x}ms` //keep time as ms
+            }
+        }))
         //add titles for x-axis
         //axis title arent built in so we need to manual add a 'text' element ourselves
         .append("text")
@@ -76,7 +95,7 @@ const refreshGraph = () => {
             .attr("text-anchor", "middle") //signify that this x-axis title will position itself relative to the midpoint of its div
             .attr("x", width.value/2) //position the x-axis title in the middle of the x-axis
             .attr("y", -margins.value.top / 2 - 5) //position the axis title above the x-axis (negative value to move up)
-            .text("Time(ms)")
+            .text("Time")
             .attr('fill','white')
             .attr('font-weight', '700')
             .attr('font-size', '17px')
