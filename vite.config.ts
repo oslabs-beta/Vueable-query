@@ -11,18 +11,21 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
+  root: 'Panel_TS_Vue_App',
   build: {
     rollupOptions: {
       input: {
-        // main: path.resolve(__dirname, "index.html"),
-        main: "panel.html"
+        panel: "Panel_TS_Vue_App/panel.html"
       },
       output: {
         // file: "../Extension/panel.html",
-        dir: '../Extension/',
+        dir: 'dist/',
+        entryFileNames: "[name].js",
         format: 'iife',
-        name: 'app'
+        name: 'app',
+        // inlineDynamicImports: false
       }
-    },
+    }
+  
   }
 })

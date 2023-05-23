@@ -1,4 +1,5 @@
-<script setup>
+<script setup lang="ts">
+
 import * as d3 from 'd3';
 import { ref, onMounted, watch, computed } from 'vue';
 import { useQueryStore } from '../store';
@@ -21,7 +22,7 @@ const height = computed(() => rawHeight.value - margins.value.top - margins.valu
 
 const queryHeight = 20;
 
-const refreshGraph = () => {
+const refreshGraph = (): void => {
     // remove old graph, basically everything besides the div
     d3.selectAll('.query').remove();
     d3.selectAll('.tick').remove();
