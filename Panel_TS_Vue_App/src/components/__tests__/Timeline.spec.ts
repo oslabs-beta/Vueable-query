@@ -76,28 +76,3 @@ describe('Timeline', async () => {
   // click it and expect store.selection to be 4
   // need to check if store actions are mocked?? or if they are mocked we can check the calls
 });
-// const wrapper = mount(Timeline, {
-//   global: {
-//     plugins: [
-//       createTestingPinia({
-//         initialState: {
-//           counter: { n: 20 }, // start the counter at 20 instead of 0
-//         },
-//       }),
-//     ],
-//   },
-// })
-// const store = useQueryStore() // uses the testing pinia!
-
-// 1684991737226
-// // // state can be directly manipulated
-// // store.name = 'my new name'
-// // // can also be done through patch
-// // store.$patch({ name: 'new name' })
-// // expect(store.name).toBe('new name')
-
-// describe('Timeline', () => {
-//   it('renders properly', () => {
-//     expect(wrapper.text()).toContain('Hello Vitest')
-//   })
-// })
