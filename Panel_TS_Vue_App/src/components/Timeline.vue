@@ -40,14 +40,22 @@ const refreshGraph = () => {
         .attr('transform', `translate(${margins.value.left}, ${margins.value.top})`)
         .classed('graph', true)
     
-    
     // y axis
     const y = d3.scaleBand()
         .domain(store.keys)
         .range([0, height.value]);
 
     svg.append('g')
-        .call(d3.axisLeft(y))
+        .call(d3.axisLeft(y).tickFormat((x) => {
+            //create a var that is the cutoff point for y-axis labels
+                //can decide to change later
+            const maxLength = 10; 
+            if(x.length <= maxLength) { //check if query hash is less than 10 char
+                return x; //display query hash as is
+            } else {
+                return x.slice(0, maxLength/2) + '...';
+            }
+        }))
         .append("text")
             .attr("class", "y-title")
             .attr("transform", "rotate(-90)") //rotate y-axis title vertically
@@ -63,6 +71,23 @@ const refreshGraph = () => {
     svg.selectAll(".tick text")
      .attr("fill","#F45B69")
 
+    //define a tooltip for the y-axis ticks
+    // const yAxisLabelToolTip = d3.select(this)
+        // .append('div')
+        // .style("opacity")
+        // .attr("class", "tool-tip")
+        // .style("background-color", "white")
+        
+    //define functions to change tooltip based on mouseover / mouseleave
+    // const yAxisLabelToolTipTipMouseOver = function(label) {
+    //     yAxisLabelToolTip
+    //         .style("opacity", 1)
+    //         .html(label);
+    // }
+    // const yAxisLabelToolTipTipMouseLeave = function(label) {
+    //     yAxisLabelToolTip
+    //         .style("opacity", 0)
+    // }
     // x axis
     const x = d3.scaleLinear()
         .domain([0, store.lastEndTime])
