@@ -4,10 +4,6 @@
   "description": "This is an extension to monitor query completion time, cache hits/misses on the client side, graph visualization of data flow and subscribers to caches, includes a timeline for the sequence of queries, and report on query activities with a compilesWithDevTools model.",
   "manifest_version": 3,
   "author": "Anna Duong, Brandon Yoon, Eric Tjon, & Esther Witbeck",
-
-  "action": {
-      "default_popup": "popup.html", "default_title": "Vueable Query"
-  },
   "devtools_page": "devtools.html",
   "permissions": [
     "tabs",
