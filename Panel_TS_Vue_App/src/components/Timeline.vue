@@ -118,6 +118,7 @@ const refreshGraph = () => {
             store.setHoverSelection(-1);
         })
         .on("click", (e, d) => {
+            e.stopPropagation();
             store.setSelection(d.originalIndex);
         })
 }
