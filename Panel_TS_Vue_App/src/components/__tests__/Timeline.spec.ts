@@ -8,7 +8,6 @@ import { createTestingPinia } from '@pinia/testing'
 import { useQueryStore } from '../../store';
 import fs from 'fs';
 import path from 'path';
-import { flushPromises } from '@vue/test-utils';
 
 // initialize 'global' variables for tests
 let initialData: [Message];
@@ -64,16 +63,16 @@ describe('Timeline Vue Component', () => {
       expect(document.getElementById('graph')).toBeTruthy();
     })
   })
-
-  it('displays keys in order', async () => {
-    // console.log('html', wrapper.html());
-    expect(wrapper.findAll('text')[0].text()).toBe('["posts"]')
-    expect(wrapper.findAll('text')[1].text()).toBe('["post",1]')
-    expect(wrapper.findAll('text')[2].text()).toBe('["post",2]')
-    expect(wrapper.findAll('text')[3].text()).toBe('["post",3]')
+  describe('d3 graph', () => {
+    it('displays keys in order', async () => {
+      // console.log('html', wrapper.html());
+      expect(wrapper.findAll('text')[0].text()).toBe('["posts"]')
+      expect(wrapper.findAll('text')[1].text()).toBe('["post",1]')
+      expect(wrapper.findAll('text')[2].text()).toBe('["post",2]')
+      expect(wrapper.findAll('text')[3].text()).toBe('["post",3]')
+    })
+    it('displays rect datapoints for each query', async () => {
+      expect(wrapper.findAll('rect').length).toBe(6);
+    })
   })
-  it('displays rect datapoints for each query', async () => {
-    expect(wrapper.findAll('rect').length).toBe(6);
-  })
-
 });
