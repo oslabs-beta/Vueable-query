@@ -60,7 +60,7 @@ const refreshGraph = () => {
             .attr('font-weight', '700')
             .attr('font-size', '17px')
 
-    yAxis.selectAll(".tick text")
+    svg.selectAll(".tick text")
      .attr("fill","#F45B69")
 
     // x axis
