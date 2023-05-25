@@ -22,27 +22,27 @@ if(!(window.hasOwnProperty('__VUE__'))){ // check if Vue is running
 
   //  queryHash, [start, end            ]
   // Map<string, [date, date | undefined]>
-  const queryStorage = new Map<string, Number[]>(); //use map to track the history of queries
+  const queryStorage = new Map<string, [number, number]>(); //use map to track the history of queries
   // post messages to the window
   const queryHasBeenSeen = (queryHash: string) => queryStorage.has(queryHash);
   const callback = (event: Event) => {
     // new query (either fresh or after invalidation)
     if (event.type === 'added') {
       // record start time
-      queryStorage.set(event.query.queryHash, [Date.now(), ]) //when a query first called, set its queryHash and start time inside map
+      queryStorage.set(event.query.queryHash, [Date.now(), -1]) //when a query first called, set its queryHash and start time inside map
       // messageWindow({ event, startTime: queryStorage.get(event.query.queryHash)[0], endTime: undefined, type: 'start' } );
     } else if ((event.type === 'updated' && event.action.type === 'success')) { // when fetch call returns and updates cache 
       let startTime: number, endTime: number; //initialize start and end time variables
       if(queryHasBeenSeen(event.query.queryHash)){ // check if we've already seen query
-        // @ts-ignore ts doesnt like array destructuring
+        // @ts-ignore array destructuring from a map doesn't play well with ts
         [startTime, endTime] = queryStorage.get(event.query.queryHash); // grab its start and end time and save to startTime & endTime variables
       } else {
         //assuming query was added before script ran, initalize start time to when script loads
         startTime = defaultStart;
+        endTime = -1;
       }
       // Query started, but no end time, so we know this update is the end
-      // @ts-ignore we know endtime might be undefined
-      if (!endTime) {
+      if (endTime === -1) {
         // record end time
         endTime = Date.now();
         queryStorage.set(event.query.queryHash, [startTime, endTime])
