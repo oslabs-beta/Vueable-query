@@ -87,28 +87,36 @@ const refreshGraph = () => {
     .append('rect')
     .attr('width', 80)
     .attr('height', 70)
-    .attr('x', 0)
-    .attr('y', 0)
+    .attr('x', 0) // should initialize to mouse position
+    .attr('y', 0) // should initialize to mouse position
     .attr('opacity', 0)
-    .style('fill', 'green')
+    .style('fill', 'white')
+    .style('border-radius', '5px')
     .classed('tooltip', true)
 
-  const toolTipMouseOver = e => {
+  const tooltipText = tooltip.append('text')
+    .text('')
+
+  const toolTipMouseOver = (e, d) => {
     tooltip
       .attr('opacity', 1)
+    tooltipText
+      .text(d)
   }
   const toolTipMouseOut = e => {
     tooltip
       .attr('opacity', 0)
+    tooltipText
+      .text('')
   }
   const toolTipMouseMove = e => {
+    const padding = 5;
     const distance = 7;
     const [x, y] = d3.pointer(e);
     const xBoundary = width.value;
     const yBoundary = 0;
     const toolWidth = Number(tooltip.attr('width'));
     const toolHeight = Number(tooltip.attr('height'));
-    const padding = 5;
     // x reset
     if (x + distance + toolWidth >= xBoundary) {
       tooltip
@@ -120,7 +128,7 @@ const refreshGraph = () => {
     // y reset
     if (y - distance - toolHeight <= yBoundary) {
       tooltip
-        .attr('y', yBoundary + paddding)
+        .attr('y', yBoundary + padding)
     } else {
       tooltip
         .attr('y', y - toolHeight - distance)
