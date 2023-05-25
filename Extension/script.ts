@@ -65,7 +65,8 @@ if(!(window.hasOwnProperty('__VUE__'))){ // check if Vue is running
 
 
   // send from script.js to content.js
-  function messageWindow ({ event, startTime, endTime, type }) {
+  function messageWindow ({ event, startTime, endTime, type }: 
+    {event: Event, startTime: number, endTime: number, type: string}) {
     // console.log('tidied event:\n', 
     //   { ...event, query: { ...event.query, cache: null, observers: null } }
     // );
@@ -97,6 +98,7 @@ function getQueryClient () {
       }
     }
     // try to access Vue query client
+    // @ts-ignore we check if __vue_app__ exists above
     const queryClient = el.__vue_app__._context.app._context.provides.VUE_QUERY_CLIENT;
     return queryClient;
   } catch {

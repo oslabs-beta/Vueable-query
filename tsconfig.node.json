@@ -1,10 +1,11 @@
 {
   "extends": "@tsconfig/node18/tsconfig.json",
-  "include": ["vite.config.*", "vitest.config.*", "cypress.config.*", "playwright.config.*"],
+  "include": ["vite.config.*", "vitest.config.*", "cypress.config.*", "playwright.config.*", "Extension/*.ts", "env.d.ts"],
   "compilerOptions": {
     "allowJs": true,
-    "composite": true,
     "module": "ESNext",
-    "types": ["node"]
+    "types": ["node", "chrome", "d3"],
+    "lib": ["dom"],
+    "incremental": false
   }
 }

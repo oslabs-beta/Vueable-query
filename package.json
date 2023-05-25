@@ -4,22 +4,22 @@
   "private": true,
   "scripts": {
     "dev": "vite ",
-    "build": "run-p type-check build-only",
+    "build": "npm run type-check && npm run build-only",
     "preview": "vite preview",
     "test:unit": "vitest",
     "build-only": "vite build && vite build -c vite.config.extension.ts && cp Extension/manifest.json dist/",
-    "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
+    "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false && tsc --noEmit -p tsconfig.node.json",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
   },
   "dependencies": {
-    "@types/d3": "^7.4.0",
     "d3": "^7.8.4",
     "pinia": "^2.0.35",
     "vue": "^3.2.47",
-    "vue-dd": "^1.5.0"
+    "vue-dd": "^1.5.0" 
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.2.0",
+    "@types/d3": "^7.4.0",
     "@tsconfig/node18": "^2.0.1",
     "@types/chrome": "^0.0.236",
     "@types/jsdom": "^21.1.1",
