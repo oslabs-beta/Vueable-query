@@ -46,7 +46,7 @@ const refreshGraph = () => {
         .domain(store.keys)
         .range([0, height.value]);
 
-    const yAxis = svg.append('g')
+    svg.append('g')
         .call(d3.axisLeft(y))
         .append("text")
             .attr("class", "y-title")
