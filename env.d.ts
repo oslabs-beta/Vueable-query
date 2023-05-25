@@ -1,4 +1,10 @@
 /// <reference types="vite/client" />
+
+interface InitMessage {
+  name: string;
+  tabId: number;
+}
+
 interface Message {
   source: string;
   payload: Payload;
@@ -13,6 +19,9 @@ interface Payload {
 
 interface Event {
   query: Query;
+  action: {
+    type: String
+  }
 }
 
 interface Query {

@@ -1,6 +1,10 @@
 // content injects script to window, forwards messages to background.js, then background forwards them to devtool.js
-const connections = {};
-const histories = {};
+const connections: {
+  [tabId: string]: chrome.runtime.Port
+} = {};
+const histories: {
+  [tabId: string]: Message[]
+} = {};
 
 // when a tab closes, if it's the tab with active history, clear history
 chrome.tabs.onRemoved.addListener(refreshHistoryConditionally);
@@ -18,7 +22,7 @@ chrome.webNavigation.onCommitted.addListener(
 );
 
 chrome.runtime.onConnect.addListener(function (port) { // listen for new ports
-  const extensionListener = function ({ name, tabId }, sender, sendResponse) { // listen for messages
+  const extensionListener = function ({ name, tabId }: {name: string, tabId: string}) { // listen for messages
     // The original connection event doesn't include the tab ID of the
     // DevTools page, so we need to send it explicitly.
     if (name === "init") {
@@ -35,7 +39,7 @@ chrome.runtime.onConnect.addListener(function (port) { // listen for new ports
   // handle disconnect
   port.onDisconnect.addListener(function(port) {
       port.onMessage.removeListener(extensionListener);
-      const tabs = Object.keys(connections);
+      const tabs: string[] = Object.keys(connections);
       for (let i = 0, length = tabs.length; i < length; i++) {
         if (connections[tabs[i]] === port) {
           delete connections[tabs[i]]
@@ -49,7 +53,7 @@ chrome.runtime.onConnect.addListener(function (port) { // listen for new ports
 // content.js -> here -> devtool panel
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   // Messages from content scripts should have sender.tab set
-  if (sender.tab) {
+  if (sender.tab && sender.tab.id !== undefined) {
     const tabId = sender.tab.id;
     if (!histories.hasOwnProperty(tabId)) histories[tabId] = [];
     histories[tabId].push(request);
@@ -64,7 +68,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   return true;
 });
 
-function refreshHistoryConditionally (tabId) {
+function refreshHistoryConditionally (tabId: number) {
   if (histories.hasOwnProperty(tabId)) {
     histories[tabId] = [];
     // send message to devTool store to reset
