@@ -25,12 +25,12 @@ export const useQueryStore = defineStore('query', () => {
   // ---setters---
   function addPageStartTime(time: number) {
     pageStartTime.value = time;
-    console.log('pageStartTime: ', pageStartTime.value)
+    // console.log('pageStartTime: ', pageStartTime.value)
   }
 
   function addNewQuery(message: Message) {
     data.value.push(message);
-    console.log(JSON.stringify(data.value))
+    // console.log(JSON.stringify(data.value))
   }
 
   function resetHistory(): void {
