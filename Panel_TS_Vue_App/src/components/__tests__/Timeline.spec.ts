@@ -9,13 +9,12 @@ import { useQueryStore } from '../../store';
 import fs from 'fs';
 import path from 'path';
 
-// initialize 'global' variables for tests
-let initialData: [Message];
-let wrapper: VueWrapper;
-let store: any;
-
 
 describe('Timeline Vue Component', () => {
+  // initialize 'global' variables for tests
+  let initialData: [Message];
+  let wrapper: VueWrapper;
+  let store: any;
   describe('Testing Setup', () => {
     it('reads from file properly', () => {
       // sets initialData to data.json, which is an array of Messages
