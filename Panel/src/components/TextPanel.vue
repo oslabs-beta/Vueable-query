@@ -2,17 +2,10 @@
   import { useQueryStore } from '../store';
   import { VueDd } from 'vue-dd';
   const store = useQueryStore(); 
-
-//  (Map of divs) (establish this after v-for?)
-//  watch(store.selection, () => {
-//  selecting originalIndex = 12
-//    turnOff(Map.get(prevSelection));
-//    turnOn(Map.get(store.selection))
-// }
 </script>
 
 <template>
-  <div id="text-panel">
+  <div @click="store.setSelection(-1)" id="text-panel">
     <!-- if queryHash matches the queryHash of the last element in the storeQuery.textArray, highlight it -->
     <div
       v-for="(q) in store.endQueries"
@@ -22,7 +15,7 @@
       <div
         @mouseover="store.setHoverSelection(q.originalIndex)"
         @mouseleave="store.setHoverSelection(-1)"
-        @click="store.setSelection(q.originalIndex)"
+        @click="e => {e.stopPropagation(); store.setSelection(q.originalIndex)}"
         v-bind:style="q.originalIndex === store.selection 
           ? {backgroundColor :'#E4FDE1', color: 'rgb(45, 45, 45)'} 
           : (q.originalIndex === store.hoverSelection 
@@ -55,7 +48,7 @@
             : {})"        
         @mouseover="store.setHoverSelection(c.originalIndex)"
         @mouseleave="store.setHoverSelection(-1)"
-        @click="store.setSelection(c.originalIndex)"
+        @click="e => {e.stopPropagation(); store.setSelection(c.originalIndex)}"
         class="query-text"
       >
         <span class="cache-info">
