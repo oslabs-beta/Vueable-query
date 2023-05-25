@@ -84,8 +84,11 @@ const refreshGraph = () => {
 
   // add tooltip
   const tooltip = svg.append('g')
-    .append('circle')
-    .attr('r', 20)
+    .append('rect')
+    .attr('width', 80)
+    .attr('height', 70)
+    .attr('x', 0)
+    .attr('y', 0)
     .attr('opacity', 0)
     .style('fill', 'green')
     .classed('tooltip', true)
@@ -98,6 +101,12 @@ const refreshGraph = () => {
     tooltip
       .attr('opacity', 0)
   }
+  const toolTipMouseMove = e => {
+    const [x, y] = d3.pointer(e);
+    tooltip
+      .attr('x', x + 7)
+      .attr('y', y - tooltip.attr('height') - 7)
+ } 
 
   svg.selectAll('.query')
     .data(store.queries)
@@ -139,6 +148,7 @@ const refreshGraph = () => {
       e.stopPropagation();
       store.setSelection(d.originalIndex);
     })
+    .on("mousemove", toolTipMouseMove);
 }
 
 watch(() => store.queries, refreshGraph)
@@ -147,7 +157,7 @@ watch(() => store.hoverSelection, refreshGraph)
 
 </script>
 
-<template>
+  <template>
   <div id="graph"></div>
 </template>
 
