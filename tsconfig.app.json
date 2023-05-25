@@ -9,5 +9,6 @@
       "@/*": ["./src/*"]
     },
     "allowJs": true,
+    "moduleResolution":"node",
   }
 }
