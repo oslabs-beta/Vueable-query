@@ -25,11 +25,12 @@ export const useQueryStore = defineStore('query', () => {
   // ---setters---
   function addPageStartTime(time: number) {
     pageStartTime.value = time;
-    //console.log('pageStartTime: ', pageStartTime.value)
+    console.log('pageStartTime: ', pageStartTime.value)
   }
 
   function addNewQuery(message: Message) {
     data.value.push(message);
+    console.log(JSON.stringify(data.value))
   }
 
   function resetHistory(): void {
@@ -38,6 +39,7 @@ export const useQueryStore = defineStore('query', () => {
 
   function setSelection(index: number) {
     selection.value = index;
+    console.log(selection.value)
   }
 
   function setHoverSelection(index: number) {
@@ -102,5 +104,5 @@ export const useQueryStore = defineStore('query', () => {
   const cacheQueries = computed<FormattedQuery[]>(() => queries.value.filter((obj):boolean => (obj.type === 'cache')));
 
 
-  return { keys, queries, addNewQuery, resetHistory, endQueries, cacheQueries, setSelection, setHoverSelection, selection, hoverSelection, addPageStartTime, lastEndTime }
+  return {data, keys, queries, addNewQuery, resetHistory, endQueries, cacheQueries, setSelection, setHoverSelection, selection, hoverSelection, addPageStartTime, lastEndTime }
 })

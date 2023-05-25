@@ -64,12 +64,17 @@ describe('Timeline', async () => {
   })
   it('displays keys', async () => {
     // await flushPromises();
-    // console.log('html', wrapper.html());
+    console.log('html', wrapper.html());
     expect(wrapper.findAll('text')[0].text()).toBe('["posts"]')
     expect(wrapper.findAll('text')[1].text()).toBe('["post",1]')
     expect(wrapper.findAll('text')[2].text()).toBe('["post",2]')
     expect(wrapper.findAll('text')[3].text()).toBe('["post",3]')
   })
+
+  // add testing for hover and click
+  // select rect element, id of query_4 for example
+  // click it and expect store.selection to be 4
+  // need to check if store actions are mocked?? or if they are mocked we can check the calls
 });
 // const wrapper = mount(Timeline, {
 //   global: {
