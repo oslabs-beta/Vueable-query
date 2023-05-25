@@ -80,7 +80,11 @@ const refreshGraph = () => {
         })
         //fixed height of bar
         .attr('height', queryHeight)
+        // set class to query and id to query{query.originalIndex}
         .classed('query', true)
+        .attr("id", function(d){   
+                return `query_${d.originalIndex}`;   
+        })
         .attr('fill', (d) => {
             if (d.originalIndex === store.selection) {
                 return '#E4FDE1';
