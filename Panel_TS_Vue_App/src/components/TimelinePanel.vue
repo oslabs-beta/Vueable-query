@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import { useQueryStore } from '../store';
 import Timeline from './Timeline.vue';
+const { setSelection } = useQueryStore();
 </script>
 
 <template>
-  <div id="timeline-panel">
+  <div
+    id="timeline-panel"
+    @click="setSelection(-1)"
+  >
     <h2>Query Timeline</h2> 
     <Timeline />
   </div>

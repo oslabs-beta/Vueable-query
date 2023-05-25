@@ -35,6 +35,9 @@ export const useQueryStore = defineStore('query', () => {
 
   function resetHistory(): void {
     data.value = [];
+    pageStartTime.value = -1;
+    selection.value = -1;
+    hoverSelection.value = -1;
   }
 
   function setSelection(index: number) {

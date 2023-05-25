@@ -1,12 +1,18 @@
 <script setup lang="ts">
 import TimelinePanel from './components/TimelinePanel.vue'
 import TextPanel from './components/TextPanel.vue'
+import { useQueryStore } from './store';
+const store = useQueryStore();
+
 </script>
 
 <template>
-  <div class="container">
+  <div v-if="store.pageStartTime > 0" class="container">
     <TimelinePanel />
     <TextPanel />
+  </div>
+  <div id="error" v-else>
+    Tanstack Query for Vue not found on current page 😢
   </div>
 </template>
 
@@ -19,7 +25,7 @@ import TextPanel from './components/TextPanel.vue'
     width: 100%;
     justify-content: center;
   }
-  
+
   #timeline-panel, 
   #text-panel {
     height: 50%;
