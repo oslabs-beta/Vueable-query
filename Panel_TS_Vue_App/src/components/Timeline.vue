@@ -5,6 +5,8 @@ import { useQueryStore } from '../store';
 
 const store = useQueryStore();
 
+
+
 //margins
 const margins = ref({
     top: 25,
@@ -22,6 +24,8 @@ const height = computed(() => rawHeight.value - margins.value.top - margins.valu
 const queryHeight = 20;
 
 const refreshGraph = () => {
+  
+
     // remove old graph, basically everything besides the div
     d3.selectAll('.query').remove();
     d3.selectAll('.tick').remove();
@@ -59,8 +63,6 @@ const refreshGraph = () => {
 
     svg.append('g')
         .call(d3.axisTop(x));
-
-
 
     svg.selectAll('.query')
         .data(store.queries)
@@ -108,6 +110,9 @@ const refreshGraph = () => {
 watch(() => store.queries, refreshGraph)
 watch(() => store.selection, refreshGraph)
 watch(() => store.hoverSelection, refreshGraph)
+onMounted(() => {
+  refreshGraph();
+})
 
 </script>
 
