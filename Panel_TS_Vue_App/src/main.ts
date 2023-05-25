@@ -27,14 +27,15 @@ backgroundPageConnection.postMessage({
 // background.js -> here
 
 backgroundPageConnection.onMessage.addListener((message: Message) => {
-  console.log('got a message in main.ts: ', message)
+//  console.log('got a message in main.ts: ', message)
   const { startTime, endTime, type, event } = message.payload;
   if(type === 'pageStartTime') {
     store.addPageStartTime(message.payload.startTime)
   } else if (type === 'resetHistory') {
+//    console.log('request to reset History');
     store.resetHistory();
   } else {
-    console.log('main.ts: message received at its destination!', startTime, endTime, type, event.query.queryHash, message);
+//    console.log('main.ts: message received at its destination!', startTime, endTime, type, event.query.queryHash, message);
     store.addNewQuery(message);
   }
 });

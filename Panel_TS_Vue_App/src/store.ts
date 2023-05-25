@@ -35,6 +35,9 @@ export const useQueryStore = defineStore('query', () => {
 
   function resetHistory(): void {
     data.value = [];
+    pageStartTime.value = -1;
+    selection.value = -1;
+    hoverSelection.value = -1;
   }
 
   function setSelection(index: number): void {
@@ -103,5 +106,5 @@ export const useQueryStore = defineStore('query', () => {
   const cacheQueries = computed<FormattedQuery[]>(() => queries.value.filter((obj):boolean => (obj.type === 'cache')));
 
 
-  return { keys, queries, addNewQuery, resetHistory, endQueries, cacheQueries, setSelection, setHoverSelection, selection, hoverSelection, addPageStartTime, lastEndTime }
+  return { keys, queries, addNewQuery, resetHistory, endQueries, cacheQueries, setSelection, setHoverSelection, selection, hoverSelection, addPageStartTime, lastEndTime, pageStartTime}
 })
