@@ -10,7 +10,7 @@ const margins = ref({
     top: 50,
     right: 20, //increased margin right from 10 to 20
     bottom: 10,
-    left: 100
+    left: 105 //increased margin left from 100 to 105
 });
 
 const rawWidth = ref(550); // dynamic width and height
@@ -53,7 +53,7 @@ const refreshGraph = () => {
             if(x.length <= maxLength) { //check if query hash is less than 10 char
                 return x; //display query hash as is
             } else {
-                return x.slice(0, maxLength/2) + '...';
+                return x.slice(0, maxLength) + '...';
             }
         }))
         .append("text")
@@ -96,18 +96,21 @@ const refreshGraph = () => {
     
     svg.append('g')
         //dynamically rescale x-axis tick labels
-        .call(d3.axisTop(x).ticks(10).tickFormat((x)=>{
+        .call(d3.axisTop(x).ticks(8).tickFormat((x)=>{
+            let second = Math.floor(x / 1_000)
+            let minute = Math.floor(second / 60);
+            let hour = Math.floor(minute / 60);
             //check if ms is over an hour
             if(x >= 3.6e+6) {
-                return `${(x / 60_000).toPrecision(2)}hr` //convert ms to hr and round to 2 sig figs
+                return `${hour}h:${(x - (hr * 3_600_000) ) / 1_000}m` //convert ms to hr and round to 2 sig figs
             }
             //check if current time in ms is greater than a minute
-            else if(x >= 60_000) { //convert ms to min and round to 2 sig figs
-                return `${(x / 60_000).toPrecision(2)}min`
+            else if(x >= 60_000) { 
+                return `${minute}m${(x - (minute * 60_000)) / 1_000}s` 
             } 
             //check if ms is greater than a second
             else if (x >= 1_000){ 
-                return `${x / 1_000}s` //convert ms to seconds
+                return `${second}s` //convert ms to seconds
             } 
             else {
                 return `${x}ms` //keep time as ms
