@@ -5,7 +5,6 @@
     "composite": true,
     "lib": [],
     "types": ["node", "jsdom"],
-    "allowJs": true,
     "moduleResolution":"node",
   }
 }
