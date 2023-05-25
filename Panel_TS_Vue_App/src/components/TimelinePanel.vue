@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useQueryStore } from '../store';
-import Timeline from './Timeline.vue';
+import TimelineGraph from './TimelineGraph.vue';
 const { setSelection } = useQueryStore();
 </script>
 
@@ -10,7 +10,7 @@ const { setSelection } = useQueryStore();
     @click="setSelection(-1)"
   >
     <h2>Query Timeline</h2> 
-    <Timeline />
+    <TimelineGraph />
   </div>
  
 </template>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import * as d3 from 'd3';
-import { ref, onMounted, watch, computed } from 'vue';
+import { ref, watch, computed } from 'vue';
 import { useQueryStore } from '../store';
 
 const store = useQueryStore();
