@@ -105,13 +105,14 @@ const refreshGraph = () => {
     const distance = 7;
     const [x, y] = d3.pointer(e);
     const xBoundary = width.value;
-    const yBoundary = margins.value.top;
+    const yBoundary = 0;
     const toolWidth = Number(tooltip.attr('width'));
     const toolHeight = Number(tooltip.attr('height'));
+    const padding = 5;
     // x reset
     if (x + distance + toolWidth >= xBoundary) {
       tooltip
-        .attr('x', xBoundary - toolWidth)
+        .attr('x', xBoundary - toolWidth - padding)
     } else {
       tooltip
         .attr('x', x + distance)
@@ -119,7 +120,7 @@ const refreshGraph = () => {
     // y reset
     if (y - distance - toolHeight <= yBoundary) {
       tooltip
-        .attr('y', yBoundary)
+        .attr('y', yBoundary + paddding)
     } else {
       tooltip
         .attr('y', y - toolHeight - distance)
