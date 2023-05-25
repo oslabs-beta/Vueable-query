@@ -16,19 +16,16 @@ let wrapper: VueWrapper;
 let store: any;
 
 
-describe('store', () => {
+describe('Timeline testing initialization', () => {
   it('reads from file properly', () => {
     // sets initialData to data.json, which is an array of Messages
     initialData = JSON.parse(fs.readFileSync(path.resolve(__dirname, 'data.json'), 'utf-8'))
   })
-  it('gets data of type array', () => {
+  it('gets sample data messages of type array', () => {
     expect(Array.isArray(initialData)).toBeTruthy()
     expect(initialData.length).not.toBe(0);
   })
-});
-
-describe('Timeline', async () => {
-  it('imports properly', () => {
+  it('imports the component properly', () => {
     expect(Timeline).toBeTruthy();
   })
   it('mounts properly with initialized store in testing environment', () => {
@@ -47,6 +44,7 @@ describe('Timeline', async () => {
           createTestingPinia({
             initialState: {
               query: {data: initialData},
+              // also should initialize start time
             },
           }),
         ],
@@ -62,13 +60,27 @@ describe('Timeline', async () => {
     expect(Array.isArray(store.endQueries)).toBeTruthy()
     expect(Array.isArray(store.cacheQueries)).toBeTruthy()
   })
-  it('displays keys', async () => {
+
+  it('div with id graph appears on the dom', () => {
+    expect(document.getElementById('graph')).toBeTruthy();
+  })
+
+});
+
+describe('Timeline d3 graph', async () => {
+  it('displays keys in order', async () => {
     // await flushPromises();
     console.log('html', wrapper.html());
     expect(wrapper.findAll('text')[0].text()).toBe('["posts"]')
     expect(wrapper.findAll('text')[1].text()).toBe('["post",1]')
     expect(wrapper.findAll('text')[2].text()).toBe('["post",2]')
     expect(wrapper.findAll('text')[3].text()).toBe('["post",3]')
+  })
+  it('displays rectangles', async () => {
+    // await flushPromises();
+    // console.log('html', wrapper.html());
+    expect(wrapper.findAll('rect')[0]).toBeTruthy();
+
   })
 
   // add testing for hover and click
