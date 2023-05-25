@@ -94,6 +94,7 @@ const refreshGraph = (): void => {
             return x(d.startTime);
         })
         .attr('y', function(d) {
+            // @ts-ignore d.queryHash is always defined
             return y(d.queryHash) + y.bandwidth() / 2 - queryHeight / 2;
         })
         //width of the bar for either a query or cache hit
@@ -111,11 +112,11 @@ const refreshGraph = (): void => {
             } else return '#F45B69';
         })
         .on('mouseover', (e, d) => {
-            d3.select(this).style("cursor", "pointer");
+            d3.select(e.target).style("cursor", "pointer");
             store.setHoverSelection(d.originalIndex)
         })
-        .on("mouseout", () => {
-            d3.select(this).style("cursor", "");
+        .on("mouseout", (e, d) => {
+            d3.select(e.target).style("cursor", "");
             store.setHoverSelection(-1);
         })
         .on("click", (e, d) => {
