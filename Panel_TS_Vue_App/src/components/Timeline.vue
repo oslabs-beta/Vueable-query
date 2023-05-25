@@ -102,11 +102,30 @@ const refreshGraph = () => {
       .attr('opacity', 0)
   }
   const toolTipMouseMove = e => {
+    const distance = 7;
     const [x, y] = d3.pointer(e);
-    tooltip
-      .attr('x', x + 7)
-      .attr('y', y - tooltip.attr('height') - 7)
+    const xBoundary = width.value;
+    const yBoundary = margins.value.top;
+    const toolWidth = Number(tooltip.attr('width'));
+    const toolHeight = Number(tooltip.attr('height'));
+    // x reset
+    if (x + distance + toolWidth >= xBoundary) {
+      tooltip
+        .attr('x', xBoundary - toolWidth)
+    } else {
+      tooltip
+        .attr('x', x + distance)
+    }
+    // y reset
+    if (y - distance - toolHeight <= yBoundary) {
+      tooltip
+        .attr('y', yBoundary)
+    } else {
+      tooltip
+        .attr('y', y - toolHeight - distance)
+    }
  } 
+
 
   svg.selectAll('.query')
     .data(store.queries)
