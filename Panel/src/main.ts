@@ -30,7 +30,7 @@ backgroundPageConnection.onMessage.addListener((message: Message) => {
 //  console.log('got a message in main.ts: ', message)
   const { startTime, type} = message.payload;
   if(type === 'pageStartTime') {
-    store.addPageStartTime(startTime)
+    store.setPageStartTime(startTime)
   } else if (type === 'resetHistory') {
 //    console.log('request to reset History');
     store.resetHistory();
