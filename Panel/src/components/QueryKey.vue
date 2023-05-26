@@ -1,47 +1,46 @@
 <script setup lang="ts">
   import { useQueryStore } from '../store';
   import { VueDd } from 'vue-dd';
-  import QueryCacheHit from '../../../Panel/src/components/QueryCacheHit.vue';
+  import QueryCacheHit from './QueryCacheHit.vue';
   const store = useQueryStore(); 
   const props = defineProps<{
-    q?: FormattedQuery,
-    c?: FormattedQuery
+    q: FormattedQuery
   }>()
 </script>
 
 <template>
   <div
-        @mouseover="store.setHoverSelection(props.q.originalIndex)"
-        @mouseleave="store.setHoverSelection(-1)"
-        @click="e => {e.stopPropagation(); store.setSelection(props.q.originalIndex)}"
-        v-bind:style="props.q.originalIndex === store.selection 
-          ? {backgroundColor :'#E4FDE1', color: 'rgb(45, 45, 45)'} 
-          : (props.q.originalIndex === store.hoverSelection 
-            ? {backgroundColor :'#028090', color: 'white'} 
-            : {})"
-        class="query-text"  
-      >
-        <span class="query-info">
-          Query for key: 
-          <span class="hash">{{ JSON.parse(props.q.queryHash) }}</span> 
-            &emsp;
-          <vue-dd
-            class="text-panel-object"
-            :preview="false"
-            max-width="35%"
-            :dark="false"
-            :model-value="q"
-          /> 
-        </span>
-        <br/>
-      </div>
-      
-      <div 
-      >
-        <QueryCacheHit v-for="props.c in store.cacheQueries.filter((obj):boolean => obj.queryHash === props.q.queryHash)"
-        :key="props.c.queryHash" />
-    
-      </div>
+    @mouseover="store.setHoverSelection(props.q.originalIndex)"
+    @mouseleave="store.setHoverSelection(-1)"
+    @click="e => {e.stopPropagation(); store.setSelection(props.q.originalIndex)}"
+    v-bind:style="props.q.originalIndex === store.selection 
+      ? {backgroundColor :'#E4FDE1', color: 'rgb(45, 45, 45)'} 
+      : (props.q.originalIndex === store.hoverSelection 
+        ? {backgroundColor :'#028090', color: 'white'} 
+        : {})"
+    class="query-text"  
+  >
+    <span class="query-info">
+      Query for key: 
+      <span class="hash">{{ JSON.parse(props.q.queryHash) }}</span> 
+      &emsp;
+      <vue-dd
+        class="text-panel-object"
+        :preview="false"
+        max-width="35%"
+        :dark="false"
+        :model-value="q"
+      /> 
+    </span>
+    <br/>
+  </div>
+  <div >
+    <QueryCacheHit
+      v-for="c in store.cacheQueries.filter((obj):boolean => obj.queryHash === props.q.queryHash)"
+      :key="c.queryHash"
+      :c="c"
+    />
+  </div>
 </template>
 
 <style scoped>
