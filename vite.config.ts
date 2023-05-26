@@ -11,11 +11,11 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-  root: 'Panel_TS_Vue_App',
+  root: 'Panel',
   build: {
     rollupOptions: {
       input: {
-        panel: "Panel_TS_Vue_App/panel.html"
+        panel: "Panel/panel.html"
       },
       output: {
         // file: "../Extension/panel.html",
