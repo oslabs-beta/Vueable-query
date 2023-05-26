@@ -6,6 +6,7 @@ import { useQueryStore } from '../store';
 
 const store = useQueryStore();
 
+
 //margins
 const margins = ref({
     top: 50,
@@ -17,8 +18,20 @@ const margins = ref({
 const rawWidth = ref(550); // dynamic width and height
 const rawHeight = ref(300); // dynamic width and height //increased raw height height from 250-300
 
+
+
 const width = computed(() => rawWidth.value - margins.value.left - margins.value.right)
 const height = computed(() => rawHeight.value - margins.value.top - margins.value.bottom)
+
+//computed value to watch the query Hashes
+    //if it changes, check if the different of the (13) - 11(threshold) and account to add more length
+const yAxisRescale = computed(() => { 
+    if(store.keys.length > 10) {
+        const diff = store.keys.length - 10;
+        return 50 * diff;
+    }
+    return 0;
+})
 
 const queryHeight = 20;
 
@@ -34,8 +47,11 @@ const refreshGraph = (): void => {
     // assign translated point to variable 'svg'
     const svg = d3.select('#graph')
         .append('svg')
-        .attr('height', rawHeight.value)
+        .attr('height', rawHeight.value + yAxisRescale.value)
         .attr('width', rawWidth.value)
+        //use 'viewBox' to add responsiveness to graph
+            //use rawHeight and rawWidth within the 'viewBox' params
+        // .attr("viewBox", '0 0 550 300')
         .classed('graph', true)
         .append('g')
         .attr('transform', `translate(${margins.value.left}, ${margins.value.top})`)
@@ -44,7 +60,8 @@ const refreshGraph = (): void => {
     // y axis
     const y = d3.scaleBand()
         .domain(store.keys)
-        .range([0, height.value]);
+        .range([0, height.value + yAxisRescale.value])
+    
 
     svg.append('g')
         .call(d3.axisLeft(y).tickFormat((x) => {
@@ -72,23 +89,6 @@ const refreshGraph = (): void => {
     svg.selectAll(".tick text")
      .attr("fill","#F45B69")
 
-    //define a tooltip for the y-axis ticks
-    // const yAxisLabelToolTip = d3.select(this)
-        // .append('div')
-        // .style("opacity")
-        // .attr("class", "tool-tip")
-        // .style("background-color", "white")
-        
-    //define functions to change tooltip based on mouseover / mouseleave
-    // const yAxisLabelToolTipTipMouseOver = function(label) {
-    //     yAxisLabelToolTip
-    //         .style("opacity", 1)
-    //         .html(label);
-    // }
-    // const yAxisLabelToolTipTipMouseLeave = function(label) {
-    //     yAxisLabelToolTip
-    //         .style("opacity", 0)
-    // }
     // x axis
     const x = d3.scaleLinear()
         .domain([0, store.lastEndTime])
