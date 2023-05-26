@@ -122,8 +122,7 @@ const refreshGraph = () => {
 
   const moveTooltip = (axis: "x" | "y", newValue: number) => {
     tooltipBox.attr(axis, newValue);
-    if (axis === "x") tooltipTextRoot.attr(axis, newValue);
-    else tooltipTextRoot.attr(axis, newValue);
+    tooltipTextRoot.attr(axis, newValue);
   }
 
   const toolTipMouseOver = (_: Event, d: FormattedQuery) => {
@@ -163,7 +162,6 @@ const refreshGraph = () => {
       moveTooltip('y', y - toolHeight - distance);
     }
  } 
-
 
   svg.selectAll('.query')
     .data(store.queries)
