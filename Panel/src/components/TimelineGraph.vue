@@ -84,42 +84,64 @@ const refreshGraph = () => {
       .attr('font-size', '17px')
 
   // add tooltip
+  const padding = 5;
+  const ttWidth = 100;
+  const ttHeight = 100;
+
   const tooltip = svg.append('g')
     .classed('tooltip', true)
+
   const tooltipBox = tooltip.append('rect')
     .attr('x', 0) // should initialize to mouse position
     .attr('y', 0) // should initialize to mouse position
-    .attr('width', 80)
-    .attr('height', 70)
+    .attr('width', ttWidth)
+    .attr('height', ttHeight)
     .attr('opacity', 0)
     .style('fill', 'white')
     .classed('tooltip box', true)
 
-  const tooltipText = tooltip.append('text')
+  /* foreignObject suggestion taken from */
+  /* https://stackoverflow.com/questions/24784302/wrapping-text-in-d3 */
+  const tooltipTextRoot = tooltip.append('foreignObject')
+    .style('width', ttWidth)
+    .style('height', ttHeight)
     .attr('x', 0) // should initialize to mouse position
     .attr('y', 0) // should initialize to mouse position
     .classed('tooltip text', true)
-    .text('')
-
-  const padding = 5;
+  const tooltipText = tooltipTextRoot.append('xhtml:div')
+    .append('xhtml:div')
+    .style('text-align', 'center')
+    .style('width', '100%')
+    .style('height', '100%')
+    .style('padding', `${padding}px`)
+    .style('font-size', '12px')
+    .style('overflow-y', 'auto')
+    .style('color', 'rebeccapurple')
+    .style('box-sizing', 'border-box')
+    .html('')
 
   const moveTooltip = (axis: "x" | "y", newValue: number) => {
     tooltipBox.attr(axis, newValue);
-    if (axis === "x") tooltipText.attr(axis, newValue + padding);
-    else tooltipText.attr(axis, newValue + 2 * padding);
+    if (axis === "x") tooltipTextRoot.attr(axis, newValue);
+    else tooltipTextRoot.attr(axis, newValue);
   }
 
   const toolTipMouseOver = (_: Event, d: FormattedQuery) => {
     tooltipBox
       .attr('opacity', 1)
+    const prettyText = (d: FormattedQuery) => (
+      `${d.queryHash}</br>
+      dur: ${d.duration}</br>
+      type: ${d.type}`
+    );
     tooltipText
-      .text(JSON.stringify(d))
+      .html(prettyText(d))
   }
   const toolTipMouseOut = () => {
     tooltipBox
       .attr('opacity', 0)
     tooltipText
-      .text('')
+      .html('')
   }
   const toolTipMouseMove = (e: Event) => {
     const distance = 7;
