@@ -85,53 +85,60 @@ const refreshGraph = () => {
 
   // add tooltip
   const tooltip = svg.append('g')
-    .append('rect')
-    .attr('width', 80)
-    .attr('height', 70)
+    .classed('tooltip', true)
+  const tooltipBox = tooltip.append('rect')
     .attr('x', 0) // should initialize to mouse position
     .attr('y', 0) // should initialize to mouse position
+    .attr('width', 80)
+    .attr('height', 70)
     .attr('opacity', 0)
     .style('fill', 'white')
-    .classed('tooltip', true)
+    .classed('tooltip box', true)
 
   const tooltipText = tooltip.append('text')
+    .attr('x', 0) // should initialize to mouse position
+    .attr('y', 0) // should initialize to mouse position
+    .classed('tooltip text', true)
     .text('')
 
+  const padding = 5;
+
+  const moveTooltip = (axis: "x" | "y", newValue: number) => {
+    tooltipBox.attr(axis, newValue);
+    if (axis === "x") tooltipText.attr(axis, newValue + padding);
+    else tooltipText.attr(axis, newValue + 2 * padding);
+  }
+
   const toolTipMouseOver = (_: Event, d: FormattedQuery) => {
-    tooltip
+    tooltipBox
       .attr('opacity', 1)
     tooltipText
-      .text(d.queryHash)
+      .text(JSON.stringify(d))
   }
   const toolTipMouseOut = () => {
-    tooltip
+    tooltipBox
       .attr('opacity', 0)
     tooltipText
       .text('')
   }
   const toolTipMouseMove = (e: Event) => {
-    const padding = 5;
     const distance = 7;
     const [x, y] = d3.pointer(e);
     const xBoundary = width.value;
     const yBoundary = 0;
-    const toolWidth = Number(tooltip.attr('width'));
-    const toolHeight = Number(tooltip.attr('height'));
+    const toolWidth = Number(tooltipBox.attr('width'));
+    const toolHeight = Number(tooltipBox.attr('height'));
     // x reset
     if (x + distance + toolWidth >= xBoundary) {
-      tooltip
-        .attr('x', xBoundary - toolWidth - padding)
+      moveTooltip('x', xBoundary - toolWidth - padding)
     } else {
-      tooltip
-        .attr('x', x + distance)
+      moveTooltip('x', x + distance);
     }
     // y reset
     if (y - distance - toolHeight <= yBoundary) {
-      tooltip
-        .attr('y', yBoundary + padding)
+      moveTooltip('y', yBoundary + padding);
     } else {
-      tooltip
-        .attr('y', y - toolHeight - distance)
+      moveTooltip('y', y - toolHeight - distance);
     }
  } 
 
