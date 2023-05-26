@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 
 import { VueWrapper, mount } from '@vue/test-utils'
-import Timeline from '../Timeline.vue'
+import Timeline from '../TimelineGraph.vue'
 import { createTestingPinia } from '@pinia/testing'
 // import any store you want to interact with in tests
 // import { useSomeStore } from '@/stores/myStore'
@@ -64,7 +64,7 @@ describe('Timeline Vue Component', () => {
   })
   describe('d3 graph', () => {
     it('displays keys in order', async () => {
-      // console.log('html', wrapper.html());
+      console.log('html', wrapper.html());
       expect(wrapper.findAll('text')[0].text()).toBe('["posts"]')
       expect(wrapper.findAll('text')[1].text()).toBe('["post",1]')
       expect(wrapper.findAll('text')[2].text()).toBe('["post",2]')

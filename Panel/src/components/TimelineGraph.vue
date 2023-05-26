@@ -1,11 +1,10 @@
-<script setup>
+<script setup lang="ts">
+
 import * as d3 from 'd3';
-import { ref, onMounted, watch, computed } from 'vue';
+import { ref, watch, computed, onMounted} from 'vue';
 import { useQueryStore } from '../store';
 
 const store = useQueryStore();
-
-
 
 //margins
 const margins = ref({
@@ -23,9 +22,7 @@ const height = computed(() => rawHeight.value - margins.value.top - margins.valu
 
 const queryHeight = 20;
 
-const refreshGraph = () => {
-  
-
+const refreshGraph = (): void => {
     // remove old graph, basically everything besides the div
     d3.selectAll('.query').remove();
     d3.selectAll('.tick').remove();
@@ -85,6 +82,8 @@ const refreshGraph = () => {
             .attr('font-weight', '700')
             .attr('font-size', '17px')
 
+
+
     svg.selectAll('.query')
         .data(store.queries)
         // entering a data loop, for each query in queries
@@ -95,6 +94,7 @@ const refreshGraph = () => {
             return x(d.startTime);
         })
         .attr('y', function(d) {
+            // @ts-ignore d.queryHash is always defined
             return y(d.queryHash) + y.bandwidth() / 2 - queryHeight / 2;
         })
         //width of the bar for either a query or cache hit
@@ -103,11 +103,7 @@ const refreshGraph = () => {
         })
         //fixed height of bar
         .attr('height', queryHeight)
-        // set class to query and id to query{query.originalIndex}
         .classed('query', true)
-        .attr("id", function(d){   
-                return `query_${d.originalIndex}`;   
-        })
         .attr('fill', (d) => {
             if (d.originalIndex === store.selection) {
                 return '#E4FDE1';
@@ -116,11 +112,11 @@ const refreshGraph = () => {
             } else return '#F45B69';
         })
         .on('mouseover', (e, d) => {
-            d3.select(this).style("cursor", "pointer");
+            d3.select(e.target).style("cursor", "pointer");
             store.setHoverSelection(d.originalIndex)
         })
-        .on("mouseout", () => {
-            d3.select(this).style("cursor", "");
+        .on("mouseout", (e, d) => {
+            d3.select(e.target).style("cursor", "");
             store.setHoverSelection(-1);
         })
         .on("click", (e, d) => {
@@ -132,9 +128,8 @@ const refreshGraph = () => {
 watch(() => store.queries, refreshGraph)
 watch(() => store.selection, refreshGraph)
 watch(() => store.hoverSelection, refreshGraph)
-onMounted(() => {
-  refreshGraph();
-})
+// needed for tests to render d3 without store change
+onMounted(() => refreshGraph());
 
 </script>
 

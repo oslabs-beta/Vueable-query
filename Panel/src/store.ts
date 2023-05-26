@@ -23,12 +23,13 @@ export const useQueryStore = defineStore('query', () => {
 
 
   // ---setters---
-  function addPageStartTime(time: number) {
+  // setters can't be arrow functions
+  function addPageStartTime(time: number): void {
     pageStartTime.value = time;
     // console.log('pageStartTime: ', pageStartTime.value)
   }
 
-  function addNewQuery(message: Message) {
+  function addNewQuery(message: Message): void {
     data.value.push(message);
     // console.log(JSON.stringify(data.value))
   }
@@ -40,12 +41,12 @@ export const useQueryStore = defineStore('query', () => {
     hoverSelection.value = -1;
   }
 
-  function setSelection(index: number) {
+  function setSelection(index: number): void {
     selection.value = index;
     console.log(selection.value)
   }
 
-  function setHoverSelection(index: number) {
+  function setHoverSelection(index: number): void {
     hoverSelection.value = index;
   }
 
