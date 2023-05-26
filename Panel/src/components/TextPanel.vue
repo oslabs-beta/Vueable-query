@@ -7,8 +7,11 @@
 <template>
   <div @click="store.setSelection(-1)" id="text-panel">
     <!-- if queryHash matches the queryHash of the last element in the storeQuery.textArray, highlight it -->
-      <QueryKey v-for="(q) in store.endQueries"
-      :key="q.queryHash" :q="q"/>
+    <QueryKey
+      v-for="(q) in store.endQueries"
+      :key="q.queryHash"
+      :q="q"
+    />
   </div>
 </template>
 
