@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 
 import { VueWrapper, mount } from '@vue/test-utils'
-import Timeline from '../TimelineGraph.vue'
+import TimelineGraph from '../TimelineGraph.vue'
 import { createTestingPinia } from '@pinia/testing'
 // import any store you want to interact with in tests
 // import { useSomeStore } from '@/stores/myStore'
@@ -26,7 +26,7 @@ describe('Timeline Vue Component', () => {
       expect(initialData.length).toBe(6);
     })
     it('imports the component properly', () => {
-      expect(Timeline).toBeTruthy();
+      expect(TimelineGraph).toBeTruthy();
     })
     it('mounts properly with initialized store in testing environment', () => {
       // we have to manually attach the wrapped element to the DOM
@@ -37,7 +37,7 @@ describe('Timeline Vue Component', () => {
         document.body.appendChild(elem)
       }
       // mounts Timeline and defines initalState for Pinia 'query' store
-      wrapper = mount(Timeline, {
+      wrapper = mount(TimelineGraph, {
         attachTo: elem,
         global: {
           plugins: [

@@ -95,5 +95,13 @@ describe('Counter Store', () => {
     expect(store.cacheQueries.length).toBe(2);
   })
 
+  it('computes unique keys', () => {
+    const store = useQueryStore();
+    for(const query of initialData){
+      store.addNewQuery(query);
+    }
+    expect(store.keys.length).toBe(4);
+  })
+
 
 })
