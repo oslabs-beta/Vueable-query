@@ -60,7 +60,7 @@ describe('Timeline Vue Component', () => {
   })
   describe('d3 graph', () => {
     it('displays keys in order', async () => {
-      console.log('html', wrapper.html());
+      // console.log('html', wrapper.html());
       expect(wrapper.findAll('text')[0].text()).toBe('["posts"]')
       expect(wrapper.findAll('text')[1].text()).toBe('["post",1]')
       expect(wrapper.findAll('text')[2].text()).toBe('["post",2]')
