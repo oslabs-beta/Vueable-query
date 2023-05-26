@@ -1,6 +1,7 @@
-<script setup>
+<script setup lang="ts">
+
 import * as d3 from 'd3';
-import { ref, onMounted, watch, computed } from 'vue';
+import { ref, watch, computed } from 'vue';
 import { useQueryStore } from '../store';
 
 const store = useQueryStore();
@@ -21,7 +22,7 @@ const height = computed(() => rawHeight.value - margins.value.top - margins.valu
 
 const queryHeight = 20;
 
-const refreshGraph = () => {
+const refreshGraph = (): void => {
     // remove old graph, basically everything besides the div
     d3.selectAll('.query').remove();
     d3.selectAll('.tick').remove();
@@ -96,20 +97,20 @@ const refreshGraph = () => {
     
     svg.append('g')
         //dynamically rescale x-axis tick labels
-        .call(d3.axisTop(x).ticks(8).tickFormat((x)=>{
-            let second = Math.floor(x / 1_000)
+        .call(d3.axisTop(x).ticks(8).tickFormat((x) => {
+            let second = Math.floor(x.valueOf() / 1_000);
             let minute = Math.floor(second / 60);
             let hour = Math.floor(minute / 60);
             //check if ms is over an hour
-            if(x >= 3.6e+6) {
-                return `${hour}h:${(x - (hr * 3_600_000) ) / 1_000}m` //convert ms to hr and round to 2 sig figs
+            if(x.valueOf() >= 3.6e+6) {
+                return `${hour}h:${(x.valueOf() - (hour * 3_600_000) ) / 1_000}m` //convert ms to hr and round to 2 sig figs
             }
             //check if current time in ms is greater than a minute
-            else if(x >= 60_000) { 
-                return `${minute}m${(x - (minute * 60_000)) / 1_000}s` 
+            else if(x.valueOf() >= 60_000) { 
+                return `${minute}m${(x.valueOf() - (minute * 60_000)) / 1_000}s` 
             } 
             //check if ms is greater than a second
-            else if (x >= 1_000){ 
+            else if (x.valueOf() >= 1_000){ 
                 return `${second}s` //convert ms to seconds
             } 
             else {
@@ -138,6 +139,7 @@ const refreshGraph = () => {
             return x(d.startTime);
         })
         .attr('y', function(d) {
+            // @ts-ignore d.queryHash is always defined
             return y(d.queryHash) + y.bandwidth() / 2 - queryHeight / 2;
         })
         //width of the bar for either a query or cache hit
@@ -155,14 +157,15 @@ const refreshGraph = () => {
             } else return '#F45B69';
         })
         .on('mouseover', (e, d) => {
-            d3.select(this).style("cursor", "pointer");
+            d3.select(e.target).style("cursor", "pointer");
             store.setHoverSelection(d.originalIndex)
         })
-        .on("mouseout", () => {
-            d3.select(this).style("cursor", "");
+        .on("mouseout", (e, d) => {
+            d3.select(e.target).style("cursor", "");
             store.setHoverSelection(-1);
         })
         .on("click", (e, d) => {
+            e.stopPropagation();
             store.setSelection(d.originalIndex);
         })
 }

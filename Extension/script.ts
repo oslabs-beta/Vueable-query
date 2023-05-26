@@ -1,4 +1,4 @@
-if(!(window.__VUE__)){ // check if Vue is running
+if(!(window.hasOwnProperty('__VUE__'))){ // check if Vue is running
   console.log('Vueable Query Error: Vue app not detected');
 } else if(getQueryClient()) { // check if Tanstack Query is running
   console.log('Vueable Query: Tanstack Query client found');
@@ -22,25 +22,27 @@ if(!(window.__VUE__)){ // check if Vue is running
 
   //  queryHash, [start, end            ]
   // Map<string, [date, date | undefined]>
-  const queryStorage = new Map(); //use map to track the history of queries
+  const queryStorage = new Map<string, [number, number]>(); //use map to track the history of queries
   // post messages to the window
-  const queryHasBeenSeen = key => queryStorage.has(key)
-  const callback = (event) => {
+  const queryHasBeenSeen = (queryHash: string) => queryStorage.has(queryHash);
+  const callback = (event: Event) => {
     // new query (either fresh or after invalidation)
     if (event.type === 'added') {
       // record start time
-      queryStorage.set(event.query.queryHash, [Date.now(), ]) //when a query first called, set its queryHash and start time inside map
+      queryStorage.set(event.query.queryHash, [Date.now(), -1]) //when a query first called, set its queryHash and start time inside map
       // messageWindow({ event, startTime: queryStorage.get(event.query.queryHash)[0], endTime: undefined, type: 'start' } );
     } else if ((event.type === 'updated' && event.action.type === 'success')) { // when fetch call returns and updates cache 
-      let startTime, endTime; //initialize start and end time variables
+      let startTime: number, endTime: number; //initialize start and end time variables
       if(queryHasBeenSeen(event.query.queryHash)){ // check if we've already seen query
+        // @ts-ignore array destructuring from a map doesn't play well with ts
         [startTime, endTime] = queryStorage.get(event.query.queryHash); // grab its start and end time and save to startTime & endTime variables
       } else {
         //assuming query was added before script ran, initalize start time to when script loads
         startTime = defaultStart;
+        endTime = -1;
       }
       // Query started, but no end time, so we know this update is the end
-      if (!endTime) {
+      if (endTime === -1) {
         // record end time
         endTime = Date.now();
         queryStorage.set(event.query.queryHash, [startTime, endTime])
@@ -63,7 +65,8 @@ if(!(window.__VUE__)){ // check if Vue is running
 
 
   // send from script.js to content.js
-  function messageWindow ({ event, startTime, endTime, type }) {
+  function messageWindow ({ event, startTime, endTime, type }: 
+    {event: Event, startTime: number, endTime: number, type: string}) {
     // console.log('tidied event:\n', 
     //   { ...event, query: { ...event.query, cache: null, observers: null } }
     // );
@@ -89,12 +92,13 @@ function getQueryClient () {
     const all = document.querySelectorAll('*');
     let el;
     for (let i = 0; i < all.length; i++) {
-      if (all[i].__vue_app__) {
+      if (all[i].hasOwnProperty('__vue_app__')) {
         el = all[i];
         break;
       }
     }
     // try to access Vue query client
+    // @ts-ignore we check if __vue_app__ exists above
     const queryClient = el.__vue_app__._context.app._context.provides.VUE_QUERY_CLIENT;
     return queryClient;
   } catch {

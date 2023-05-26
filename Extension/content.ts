@@ -1,15 +1,16 @@
 //content script - runs every time Chrome Extension is opened; runs on every page 
-if(document.readyState === 'loading') {
+if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded',afterDOMLoaded);
 } else {
   afterDOMLoaded();
 }
 
-function afterDOMLoaded(){
+function afterDOMLoaded(): void {
   // console.log('Dom Content loaded')
-  var script = document.createElement('script'); // creates script element on the document 
+  const script = document.createElement('script'); // creates script element on the document 
   script.src = chrome.runtime.getURL('script.js'); // sets source to script.js; Chrome gives script.js a url 
-  script.onload = function() { this.remove(); }; 
+  // @ts-ignore this is a script object?
+  script.onload = function(): void { this.remove(); }; 
   (document.head || document.documentElement).appendChild(script); // append script to page
   // (script runs on the page and is the only scrip that has access to queryCache)
 
@@ -17,12 +18,12 @@ function afterDOMLoaded(){
   
   //script.js -> here 
   //add a listener for messages from script.js
-  window.addEventListener('message', function(event) {
+  window.addEventListener('message', function(event): void {
     // Only accept messages from the same frame
     if (event.source !== window) {
       return;
     }
-    const message = event.data;
+    const message: Message = event.data;
     // Only accept messages that we know are ours
     if (typeof message !== 'object' || message === null ||
         message.source !== 'vueable-query-extension') {
