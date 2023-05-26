@@ -92,25 +92,24 @@ const refreshGraph = () => {
     .attr('y', 0) // should initialize to mouse position
     .attr('opacity', 0)
     .style('fill', 'white')
-    .style('border-radius', '5px')
     .classed('tooltip', true)
 
   const tooltipText = tooltip.append('text')
     .text('')
 
-  const toolTipMouseOver = (e, d) => {
+  const toolTipMouseOver = (_: Event, d: FormattedQuery) => {
     tooltip
       .attr('opacity', 1)
     tooltipText
-      .text(d)
+      .text(d.queryHash)
   }
-  const toolTipMouseOut = e => {
+  const toolTipMouseOut = () => {
     tooltip
       .attr('opacity', 0)
     tooltipText
       .text('')
   }
-  const toolTipMouseMove = e => {
+  const toolTipMouseMove = (e: Event) => {
     const padding = 5;
     const distance = 7;
     const [x, y] = d3.pointer(e);
@@ -147,6 +146,7 @@ const refreshGraph = () => {
       return x(d.startTime);
     })
     .attr('y', function(d) {
+      // @ts-ignore d.queryHash is always defined
       return y(d.queryHash) + y.bandwidth() / 2 - queryHeight / 2;
     })
     //width of the bar for either a query or cache hit
@@ -164,12 +164,12 @@ const refreshGraph = () => {
       } else return '#F45B69';
     })
     .on('mouseover', (e, d) => {
-      d3.select(this).style("cursor", "pointer");
+      d3.select(e.target).style("cursor", "pointer");
       store.setHoverSelection(d.originalIndex);
-      toolTipMouseOver();
+      toolTipMouseOver(e, d);
     })
-    .on("mouseout", () => {
-      d3.select(this).style("cursor", "");
+    .on("mouseout", (e, d) => {
+      d3.select(e.target).style("cursor", "");
       store.setHoverSelection(-1);
       toolTipMouseOut();
     })
