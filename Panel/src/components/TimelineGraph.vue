@@ -83,86 +83,6 @@ const refreshGraph = () => {
       .attr('font-weight', '700')
       .attr('font-size', '17px')
 
-  // add tooltip
-  const padding = 5;
-  const ttWidth = 100;
-  const ttHeight = 100;
-
-  const tooltip = svg.append('g')
-    .classed('tooltip', true)
-
-  const tooltipBox = tooltip.append('rect')
-    .attr('x', 0) // should initialize to mouse position
-    .attr('y', 0) // should initialize to mouse position
-    .attr('width', ttWidth)
-    .attr('height', ttHeight)
-    .attr('opacity', 0)
-    .style('fill', 'white')
-    .classed('tooltip box', true)
-
-  /* foreignObject suggestion taken from */
-  /* https://stackoverflow.com/questions/24784302/wrapping-text-in-d3 */
-  const tooltipTextRoot = tooltip.append('foreignObject')
-    .style('width', ttWidth)
-    .style('height', ttHeight)
-    .attr('x', 0) // should initialize to mouse position
-    .attr('y', 0) // should initialize to mouse position
-    .classed('tooltip text', true)
-  const tooltipText = tooltipTextRoot.append('xhtml:div')
-    .append('xhtml:div')
-    .style('text-align', 'center')
-    .style('width', '100%')
-    .style('height', '100%')
-    .style('padding', `${padding}px`)
-    .style('font-size', '12px')
-    .style('overflow-y', 'auto')
-    .style('color', 'rebeccapurple')
-    .style('box-sizing', 'border-box')
-    .html('')
-
-  const moveTooltip = (axis: "x" | "y", newValue: number) => {
-    tooltipBox.attr(axis, newValue);
-    tooltipTextRoot.attr(axis, newValue);
-  }
-
-  const toolTipMouseOver = (_: Event, d: FormattedQuery) => {
-    tooltipBox
-      .attr('opacity', 1)
-    const prettyText = (d: FormattedQuery) => (
-      `${d.queryHash}</br>
-      dur: ${d.duration}</br>
-      type: ${d.type}`
-    );
-    tooltipText
-      .html(prettyText(d))
-  }
-  const toolTipMouseOut = () => {
-    tooltipBox
-      .attr('opacity', 0)
-    tooltipText
-      .html('')
-  }
-  const toolTipMouseMove = (e: Event) => {
-    const distance = 7;
-    const [x, y] = d3.pointer(e);
-    const xBoundary = width.value;
-    const yBoundary = 0;
-    const toolWidth = Number(tooltipBox.attr('width'));
-    const toolHeight = Number(tooltipBox.attr('height'));
-    // x reset
-    if (x + distance + toolWidth >= xBoundary) {
-      moveTooltip('x', xBoundary - toolWidth - padding)
-    } else {
-      moveTooltip('x', x + distance);
-    }
-    // y reset
-    if (y - distance - toolHeight <= yBoundary) {
-      moveTooltip('y', yBoundary + padding);
-    } else {
-      moveTooltip('y', y - toolHeight - distance);
-    }
- } 
-
   svg.selectAll('.query')
     .data(store.queries)
     // entering a data loop, for each query in queries
@@ -205,6 +125,72 @@ const refreshGraph = () => {
       store.setSelection(d.originalIndex);
     })
     .on("mousemove", toolTipMouseMove);
+
+  // add tooltip
+  const padding = 5;
+  const ttWidth = 100;
+  const ttHeight = 100;
+
+  const tooltip = svg.append('g')
+    .classed('tooltip', true)
+
+  /* foreignObject suggestion taken from */
+  /* https://stackoverflow.com/questions/24784302/wrapping-text-in-d3 */
+  const tooltipTextRoot = tooltip.append('foreignObject')
+    .style('width', ttWidth)
+    .style('height', ttHeight)
+    .attr('x', 0) // should initialize to mouse position
+    .attr('y', 0) // should initialize to mouse position
+    .classed('tooltip text', true)
+  const tooltipText = tooltipTextRoot.append('xhtml:div')
+    .append('xhtml:div')
+    .style('visibility', 'hidden')
+    .style('text-align', 'center')
+    .style('width', '100%')
+    .style('height', '100%')
+    .style('padding', `${padding}px`)
+    .style('font-size', '12px')
+    .style('overflow-y', 'auto')
+    .style('color', 'black')
+    .style('background-color', 'white')
+    .style('border-radius', '5px')
+    .style('box-sizing', 'border-box')
+    .html('')
+
+  function toolTipMouseOver (_: Event, d: FormattedQuery) {
+    const prettyText = (d: FormattedQuery) => (
+      `${d.queryHash}</br>
+      dur: ${d.duration}</br>
+      type: ${d.type}`
+    );
+    tooltipText
+      .style('visibility', 'visible')
+      .html(prettyText(d))
+  }
+  function toolTipMouseOut () {
+    tooltipText
+      .style('visibility', 'visible')
+      .html('')
+  }
+  function toolTipMouseMove (e: Event) {
+    const distance = 7;
+    const [x, y] = d3.pointer(e);
+    const xBoundary = width.value;
+    const yBoundary = 0;
+    // x reset
+    if (x + distance + ttWidth >= xBoundary) {
+      tooltipTextRoot.attr('x', xBoundary - ttWidth - padding)
+    } else {
+      tooltipTextRoot.attr('x', x + distance);
+    }
+    // y reset
+    if (y - distance - ttHeight <= yBoundary) {
+      tooltipTextRoot.attr('y', yBoundary + padding);
+    } else {
+      tooltipTextRoot.attr('y', y - ttHeight - distance);
+    }
+ } 
+
 }
 
 watch(() => store.queries, refreshGraph)
@@ -213,15 +199,9 @@ watch(() => store.hoverSelection, refreshGraph)
 
 </script>
 
-  <template>
+<template>
   <div id="graph"></div>
 </template>
 
 <style scoped>
-  rect{
-    cursor: pointer;
-  }
-  .query{
-    cursor: pointer;
-  }
 </style>
