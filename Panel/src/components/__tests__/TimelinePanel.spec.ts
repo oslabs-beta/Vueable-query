@@ -1,13 +1,9 @@
 import { describe, it, expect } from 'vitest'
-
 import { VueWrapper, mount } from '@vue/test-utils'
 import TimelinePanel from '../TimelinePanel.vue'
 import TimelineGraph from '../TimelineGraph.vue'
 import { createTestingPinia } from '@pinia/testing'
-// import any store you want to interact with in tests
-// import { useSomeStore } from '@/stores/myStore'
 import { useQueryStore } from '../../store';
-
 
 describe('Timeline Panel Vue Component', () => {
   // initialize 'global' variables for tests

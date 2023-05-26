@@ -1,11 +1,8 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-
-import { setActivePinia, createPinia } from 'pinia'// import any store you want to interact with in tests
-// import { useSomeStore } from '@/stores/myStore'
+import { setActivePinia, createPinia } from 'pinia'
 import { useQueryStore } from '../../store';
 import fs from 'fs';
 import path from 'path';
-
 
 describe('Counter Store', () => {
   let initialData: Message[];
@@ -102,6 +99,4 @@ describe('Counter Store', () => {
     }
     expect(store.keys.length).toBe(4);
   })
-
-
 })
