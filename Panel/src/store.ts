@@ -108,5 +108,6 @@ export const useQueryStore = defineStore('query', () => {
   const cacheQueries = computed<FormattedQuery[]>(() => queries.value.filter((obj):boolean => (obj.type === 'cache')));
 
 
-  return {data, keys, queries, addNewQuery, resetHistory, endQueries, cacheQueries, setSelection, setHoverSelection, selection, hoverSelection, addPageStartTime, lastEndTime }
+  return {data, keys, queries, addNewQuery, resetHistory, endQueries, cacheQueries, setSelection, setHoverSelection,
+    pageStartTime, selection, hoverSelection, addPageStartTime,lastEndTime }
 })
