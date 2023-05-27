@@ -22,6 +22,9 @@ const height = computed(() => rawHeight.value - margins.value.top - margins.valu
 
 const queryHeight = 20;
 
+// TODO fix typing
+const selectionState: { selection?: any, hoverSelection?: any } = {};
+
 const refreshGraph = () => {
   // remove old graph, basically everything besides the div
   d3.selectAll('.query').remove();
@@ -146,8 +149,6 @@ const refreshGraph = () => {
     .append('xhtml:div')
     .style('visibility', 'hidden')
     .style('text-align', 'center')
-    .style('width', '100%')
-    .style('height', '100%')
     .style('padding', `${padding}px`)
     .style('font-size', '12px')
     .style('overflow-y', 'auto')
@@ -169,7 +170,7 @@ const refreshGraph = () => {
   }
   function toolTipMouseOut () {
     tooltipText
-      .style('visibility', 'visible')
+      .style('visibility', 'hidden')
       .html('')
   }
   function toolTipMouseMove (e: Event) {
@@ -189,13 +190,34 @@ const refreshGraph = () => {
     } else {
       tooltipTextRoot.attr('y', y - ttHeight - distance);
     }
- } 
-
+  } 
 }
 
 watch(() => store.queries, refreshGraph)
-watch(() => store.selection, refreshGraph)
-watch(() => store.hoverSelection, refreshGraph)
+watch(() => store.selection, () => {
+  // turn off old selection
+  if (selectionState.hasOwnProperty('selection')) {
+    selectionState.selection.attr('fill', '#F45B69')
+  }
+  // get current selection and reset color
+  const selection = d3.selectAll('.query')
+    //TODO  fix typing
+    .filter((d:any) => d.originalIndex === store.selection)
+    .attr('fill', '#E4FDE1')
+ selectionState.selection = selection;
+})
+watch(() => store.hoverSelection, () => {
+  // turn off old selection
+  if (selectionState.hasOwnProperty('selection')) {
+    selectionState.hoverSelection.attr('fill', '#F45B69')
+  }
+  // get current selection and reset color
+  const hoverSelection = d3.selectAll('.query')
+    //TODO  fix typing
+    .filter((d:any) => d.originalIndex === store.hoverSelection)
+    .attr('fill', '#028090')
+ selectionState.hoverSelection = hoverSelection;
+})
 
 </script>
 
