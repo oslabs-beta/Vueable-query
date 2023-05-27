@@ -10,15 +10,16 @@ const store = useQueryStore();
 //margins
 const margins = ref({
     top: 50,
-    right: 20, //increased margin right from 10 to 20
+    right: 20, 
     bottom: 10,
-    left: 105 //increased margin left from 100 to 105
+    left: 105 
 });
 
 const rawWidth = ref(550); // dynamic width and height
-const rawHeight = ref(300); // dynamic width and height //increased raw height height from 250-300
+const rawHeight = ref(300); // dynamic width and height 
 
-
+const paddingInner = ref(10)
+const paddingOuter = ref(10)
 
 const width = computed(() => rawWidth.value - margins.value.left - margins.value.right)
 const height = computed(() => rawHeight.value - margins.value.top - margins.value.bottom)
@@ -67,7 +68,7 @@ const refreshGraph = (): void => {
         .call(d3.axisLeft(y).tickFormat((x) => {
             //create a var that is the cutoff point for y-axis labels
                 //can decide to change later
-            const maxLength = 10; 
+            const maxLength = 8; 
             if(x.length <= maxLength) { //check if query hash is less than 10 char
                 return x; //display query hash as is
             } else {
@@ -129,13 +130,12 @@ const refreshGraph = (): void => {
             .attr('font-weight', '700')
             .attr('font-size', '17px')
 
-    svg.selectAll('.query')
-        .data(store.queries)
-        // entering a data loop, for each query in queries
-        .enter()
-        .append('rect')
-        //lines 71 and 74 tells where the top left corner of each of the bar lives on the x-axis
+    //create a shapes variable
+    const shapes = svg.selectAll(".shapes").data(store.queries).enter()
+    //render rectangle for query/cache hits
+    shapes.append("rect")
         .attr('x', function(d) {
+            //places rectangle on endTime
             return x(d.startTime);
         })
         .attr('y', function(d) {
@@ -144,7 +144,8 @@ const refreshGraph = (): void => {
         })
         //width of the bar for either a query or cache hit
         .attr('width', function(d) {
-            return (x(d.endTime) - x(d.startTime)) || 2;
+            return (x(d.endTime) - x(d.startTime)) || 1;
+            // return 2 //fixed width
         })
         //fixed height of bar
         .attr('height', queryHeight)
@@ -168,6 +169,93 @@ const refreshGraph = (): void => {
             e.stopPropagation();
             store.setSelection(d.originalIndex);
         })
+    //circle
+    shapes.append("circle")
+        //only add circles if rect shrink to at least 2px
+        .filter(function(d) {
+            return (x(d.endTime) - x(d.startTime)) <= 2;
+        })
+        .attr('cx', function(d) {
+            //create var to hold the pixel width of the rect
+            const widthPX = (x(d.endTime) - x(d.startTime))
+            //if pixel is between length of 1 to 2 px
+                //subtract 0.5px to align circle ontop rect
+            if ((widthPX > 1)) {
+                return x(d.endTime) - 0.5; 
+            }
+            //defaults circle to align ontop rect that is 1px or less
+            return x(d.endTime);
+        })
+        .attr('cy', function(d) {
+            // @ts-ignore d.queryHash is always defined
+            return y(d.queryHash) + y.bandwidth() / 2 - queryHeight / 2 - 2 ;
+        })
+        .attr('r', 3.5)
+        //fixed height of bar
+        .attr('height', queryHeight)
+        .classed('query', true)
+        .attr('fill', (d) => {
+            if (d.originalIndex === store.selection) {
+                return '#E4FDE1';
+            } else if (d.originalIndex === store.hoverSelection) {
+                return '#028090';
+            } else return '#F45B69';
+        })
+        .on('mouseover', (e, d) => {
+            d3.select(e.target).style("cursor", "pointer");
+            store.setHoverSelection(d.originalIndex)
+        })
+        .on("mouseout", (e, d) => {
+            d3.select(e.target).style("cursor", "");
+            store.setHoverSelection(-1);
+        })
+        .on("click", (e, d) => {
+            e.stopPropagation();
+            store.setSelection(d.originalIndex);
+        })
+    //create a triangle for cache hits
+    // const triangle = d3.symbol().type(d3.symbolTriangle)
+    // svg.append("path")
+    //     .attr("d", triangle)
+    // svg.selectAll('.query')
+    //     .data(store.queries)
+    //     // entering a data loop, for each query in queries
+    //     .enter()
+    //     .append('rect')
+    //     //lines 71 and 74 tells where the top left corner of each of the bar lives on the x-axis
+        // .attr('x', function(d) {
+        //     return x(d.startTime);
+        // })
+        // .attr('y', function(d) {
+        //     // @ts-ignore d.queryHash is always defined
+        //     return y(d.queryHash) + y.bandwidth() / 2 - queryHeight / 2;
+        // })
+        // //width of the bar for either a query or cache hit
+        // .attr('width', function(d) {
+        //     return (x(d.endTime) - x(d.startTime)) || 2;
+        // })
+        // //fixed height of bar
+        // .attr('height', queryHeight)
+        // .classed('query', true)
+        // .attr('fill', (d) => {
+        //     if (d.originalIndex === store.selection) {
+        //         return '#E4FDE1';
+        //     } else if (d.originalIndex === store.hoverSelection) {
+        //         return '#028090';
+        //     } else return '#F45B69';
+        // })
+        // .on('mouseover', (e, d) => {
+        //     d3.select(e.target).style("cursor", "pointer");
+        //     store.setHoverSelection(d.originalIndex)
+        // })
+        // .on("mouseout", (e, d) => {
+        //     d3.select(e.target).style("cursor", "");
+        //     store.setHoverSelection(-1);
+        // })
+        // .on("click", (e, d) => {
+        //     e.stopPropagation();
+        //     store.setSelection(d.originalIndex);
+        // })
 }
 
 watch(() => store.queries, refreshGraph)
