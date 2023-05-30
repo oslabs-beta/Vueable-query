@@ -1,5 +1,5 @@
 import { fileURLToPath, URL } from 'node:url';
-
+import copy from 'rollup-plugin-copy'
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 
@@ -25,7 +25,14 @@ export default defineConfig({
         dir: 'dist/',
         entryFileNames: "[name].js",
         name: 'app',
-      }
+      },
+      plugins: [
+        copy({
+          targets: [
+            { src: 'Extension/manifest.json', dest: 'dist' },
+          ]
+        })
+      ]
     }
   
   }
