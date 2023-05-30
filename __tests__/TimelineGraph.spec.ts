@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest'
 import { VueWrapper, mount } from '@vue/test-utils'
-import TimelineGraph from '../TimelineGraph.vue'
+import TimelineGraph from '../Panel/src/components/TimelineGraph.vue'
 import { createTestingPinia } from '@pinia/testing'
-import { useQueryStore } from '../../store';
+import { useQueryStore } from '../Panel/src/store';
 import fs from 'fs';
 import path from 'path';
 
