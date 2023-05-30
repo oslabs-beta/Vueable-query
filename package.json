@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "vite ",
+    "demo": "npm i --prefix examples/basic && npm run dev --prefix examples/basic",
     "build": "npm run type-check && npm run build-only",
     "preview": "vite preview",
     "test:unit": "vitest",

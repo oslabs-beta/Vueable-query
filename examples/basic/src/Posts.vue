@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { useQueryClient, useQuery, QueryObserver } from '@tanstack/vue-query';
+import { useQuery } from '@tanstack/vue-query'
 
 import type { Post } from './types'
 
@@ -22,7 +22,6 @@ export default defineComponent({
     const { isLoading, isError, isFetching, data, error, refetch } = useQuery({
       queryKey: ['posts'],
       queryFn: fetcher,
-
     })
 
     return { isLoading, isError, isFetching, data, error, refetch }

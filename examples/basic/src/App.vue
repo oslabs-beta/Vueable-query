@@ -1,7 +1,5 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
-import { useQueryClient, useQuery, QueryObserver } from '@tanstack/vue-query';
-
 
 import Posts from './Posts.vue'
 import Post from './Post.vue'

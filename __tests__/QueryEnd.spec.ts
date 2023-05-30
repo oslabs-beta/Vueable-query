@@ -31,10 +31,9 @@ describe('Query End Vue Component', () => {
           query: {data: initialData},
           pageStartTime: 1684991737226
         },
-      })
+      });
       store = useQueryStore();
       expect(store.data.length).not.toBe(0);
-
       wrapper = mount(QueryEnd, {
         props: {c: store.endQueries[0]},
         global: {
@@ -52,4 +51,9 @@ describe('Query End Vue Component', () => {
       expect(Array.isArray(store.cacheQueries)).toBeTruthy()
     })
   })
-});
+  describe('displays correctly', () => {
+    it('the query hash', () => {
+      expect(wrapper.text()).toContain('["posts"]')
+    })
+  })
+})
