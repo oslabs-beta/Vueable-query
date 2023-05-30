@@ -13,20 +13,19 @@
       Query for key: 
       <span class="hash">{{ queryHash }}</span> 
   </span>
-  <div>
-    <QueryEnd
-      v-for="c in store.endQueries.filter((obj):boolean => obj.queryHash === props.queryHash)"
-      :key="c.queryHash"  
-      :c="c" 
+
+  <QueryEnd
+    v-for="c in store.endQueries.filter((obj):boolean => obj.queryHash === props.queryHash)"
+    :key="c.queryHash"  
+    :c="c" 
   />
-  </div>
-  <div >
-    <QueryCacheHit
-      v-for="c in store.cacheQueries.filter((obj):boolean => obj.queryHash === props.queryHash)"
-      :key="c.queryHash"
-      :c="c"
+
+  <QueryCacheHit
+    v-for="c in store.cacheQueries.filter((obj):boolean => obj.queryHash === props.queryHash)"
+    :key="c.queryHash"
+    :c="c"
     />
-  </div>
+
 </template>
 
 <style scoped>
