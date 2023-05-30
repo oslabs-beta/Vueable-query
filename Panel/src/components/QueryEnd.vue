@@ -9,20 +9,20 @@
 
 <template>
   <div
-    @mouseover="store.setHoverSelection(props.c.originalIndex)"
+    @mouseover="store.setHoverSelection(c.originalIndex)"
     @mouseleave="store.setHoverSelection(-1)"
-    @click="e => {e.stopPropagation(); store.setSelection(props.c.originalIndex)}"
-    v-bind:style="props.c.originalIndex === store.selection 
+    @click="e => {e.stopPropagation(); store.setSelection(c.originalIndex)}"
+    v-bind:style="c.originalIndex === store.selection 
       ? {backgroundColor :'#E4FDE1', color: 'rgb(45, 45, 45)'} 
-      : (props.c.originalIndex === store.hoverSelection 
+      : (c.originalIndex === store.hoverSelection 
         ? {backgroundColor :'#028090', color: 'white'} 
         : {})"
     class="query-text"  
   >
     <span class="cache-info">
       &emsp; &rarr; Fetch Query at:
-      <span class="hash">{{ JSON.parse(props.c.queryHash) }}</span>
-      at {{ props.c.startTime }}ms
+      <span class="hash">{{ c.queryHash }}</span>
+      at {{ c.startTime }}ms
       &emsp;
       <vue-dd
         class="text-panel-object"

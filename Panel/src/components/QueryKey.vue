@@ -11,7 +11,7 @@
 <template>
   <span class="query-info">
       Query for key: 
-      <span class="hash">{{ JSON.parse(props.queryHash) }}</span> 
+      <span class="hash">{{ queryHash }}</span> 
   </span>
   <div>
     <QueryEnd
