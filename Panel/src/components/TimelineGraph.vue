@@ -6,7 +6,6 @@ import { useQueryStore } from '../store';
 
 const store = useQueryStore();
 
-
 //margins
 const margins = ref({
     top: 50,
@@ -16,10 +15,27 @@ const margins = ref({
 });
 
 const rawWidth = ref(550); // dynamic width and height
-const rawHeight = ref(300); // dynamic width and height 
+const rawHeight = ref(200); // dynamic width and height 
 
-const paddingInner = ref(10)
-const paddingOuter = ref(10)
+const paddingInner = ref(0.9)
+const paddingOuter = ref(0.3)
+
+
+const addPaddingInner = computed(() => {
+    if(store.keys.length > 3) {
+        const diff = store.keys.length - 3;
+        return  paddingInner.value * diff
+    }
+    return paddingInner.value
+})
+
+const addPaddingOuter = computed(() => {
+    if(store.keys.length > 3) {
+        // const diff = store.keys.length - 3;
+        return  paddingOuter.value * 3
+    }
+    return paddingOuter.value
+})
 
 const width = computed(() => rawWidth.value - margins.value.left - margins.value.right)
 const height = computed(() => rawHeight.value - margins.value.top - margins.value.bottom)
@@ -27,9 +43,9 @@ const height = computed(() => rawHeight.value - margins.value.top - margins.valu
 //computed value to watch the query Hashes
     //if it changes, check if the different of the (13) - 11(threshold) and account to add more length
 const yAxisRescale = computed(() => { 
-    if(store.keys.length > 10) {
-        const diff = store.keys.length - 10;
-        return 50 * diff;
+    if(store.keys.length > 3) {
+        const diff = store.keys.length - 3;
+        return 20 * diff;
     }
     return 0;
 })
@@ -50,25 +66,24 @@ const refreshGraph = (): void => {
         .append('svg')
         .attr('height', rawHeight.value + yAxisRescale.value)
         .attr('width', rawWidth.value)
-        //use 'viewBox' to add responsiveness to graph
-            //use rawHeight and rawWidth within the 'viewBox' params
-        // .attr("viewBox", '0 0 550 300')
         .classed('graph', true)
         .append('g')
         .attr('transform', `translate(${margins.value.left}, ${margins.value.top})`)
         .classed('graph', true)
+
     
     // y axis
     const y = d3.scaleBand()
         .domain(store.keys)
         .range([0, height.value + yAxisRescale.value])
-    
+        .paddingInner(addPaddingInner.value)
+        .paddingOuter(addPaddingOuter.value)
 
     svg.append('g')
         .call(d3.axisLeft(y).tickFormat((x) => {
             //create a var that is the cutoff point for y-axis labels
                 //can decide to change later
-            const maxLength = 8; 
+            const maxLength = 10; 
             if(x.length <= maxLength) { //check if query hash is less than 10 char
                 return x; //display query hash as is
             } else {
@@ -78,9 +93,9 @@ const refreshGraph = (): void => {
         .append("text")
             .attr("class", "y-title")
             .attr("transform", "rotate(-90)") //rotate y-axis title vertically
-            .attr("text-anchor", "end") //signify that this y-axis title will position itself relative to the end of its div
-            .attr("y",  -margins.value.left / 2 - margins.value.right) //position y-axis title relative to the midpoint of the y-axis
-            .attr("x", -margins.value.left / 2) //position the y-axis title left of the y-axis labels
+            .attr("text-anchor", "middle") //signify that this y-axis title will position itself relative to the end of its div
+            .attr("x",  -(height.value / 2) - yAxisRescale.value / 2) //position y-axis title relative to the midpoint of the y-axis
+            .attr("y", -70) //position the y-axis title left of the y-axis labels
             .text("Query Hashes")
             .attr('fill','white')
             .attr('fill','white')
@@ -94,17 +109,17 @@ const refreshGraph = (): void => {
     const x = d3.scaleLinear()
         .domain([0, store.lastEndTime])
         .range([0, width.value])
-
     
     svg.append('g')
         //dynamically rescale x-axis tick labels
         .call(d3.axisTop(x).ticks(8).tickFormat((x) => {
-            let second = Math.floor(x.valueOf() / 1_000);
+            let second = x.valueOf() / 1_000
             let minute = Math.floor(second / 60);
             let hour = Math.floor(minute / 60);
             //check if ms is over an hour
             if(x.valueOf() >= 3.6e+6) {
-                return `${hour}h:${(x.valueOf() - (hour * 3_600_000) ) / 1_000}m` //convert ms to hr and round to 2 sig figs
+                const milliSecond = x.valueOf()-(hour * 3_600_000);
+                return `${hour}h:${(milliSecond.valueOf() / 1_000 / 60).toPrecision(1)}m` //convert ms to hr and round to 2 sig figs
             }
             //check if current time in ms is greater than a minute
             else if(x.valueOf() >= 60_000) { 
@@ -112,8 +127,11 @@ const refreshGraph = (): void => {
             } 
             //check if ms is greater than a second
             else if (x.valueOf() >= 1_000){ 
-                return `${second}s` //convert ms to seconds
+                return `${second.toPrecision(2)}s` //convert ms to seconds
             } 
+            else if( x.valueOf() < 0) {
+                return '';
+            }
             else {
                 return `${x}ms` //keep time as ms
             }
@@ -213,49 +231,6 @@ const refreshGraph = (): void => {
             e.stopPropagation();
             store.setSelection(d.originalIndex);
         })
-    //create a triangle for cache hits
-    // const triangle = d3.symbol().type(d3.symbolTriangle)
-    // svg.append("path")
-    //     .attr("d", triangle)
-    // svg.selectAll('.query')
-    //     .data(store.queries)
-    //     // entering a data loop, for each query in queries
-    //     .enter()
-    //     .append('rect')
-    //     //lines 71 and 74 tells where the top left corner of each of the bar lives on the x-axis
-        // .attr('x', function(d) {
-        //     return x(d.startTime);
-        // })
-        // .attr('y', function(d) {
-        //     // @ts-ignore d.queryHash is always defined
-        //     return y(d.queryHash) + y.bandwidth() / 2 - queryHeight / 2;
-        // })
-        // //width of the bar for either a query or cache hit
-        // .attr('width', function(d) {
-        //     return (x(d.endTime) - x(d.startTime)) || 2;
-        // })
-        // //fixed height of bar
-        // .attr('height', queryHeight)
-        // .classed('query', true)
-        // .attr('fill', (d) => {
-        //     if (d.originalIndex === store.selection) {
-        //         return '#E4FDE1';
-        //     } else if (d.originalIndex === store.hoverSelection) {
-        //         return '#028090';
-        //     } else return '#F45B69';
-        // })
-        // .on('mouseover', (e, d) => {
-        //     d3.select(e.target).style("cursor", "pointer");
-        //     store.setHoverSelection(d.originalIndex)
-        // })
-        // .on("mouseout", (e, d) => {
-        //     d3.select(e.target).style("cursor", "");
-        //     store.setHoverSelection(-1);
-        // })
-        // .on("click", (e, d) => {
-        //     e.stopPropagation();
-        //     store.setSelection(d.originalIndex);
-        // })
 }
 
 watch(() => store.queries, refreshGraph)
