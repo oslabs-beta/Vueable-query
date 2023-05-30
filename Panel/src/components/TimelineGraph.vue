@@ -5,6 +5,16 @@ import { ref, watch, computed } from 'vue';
 import { useQueryStore } from '../store';
 
 const store = useQueryStore();
+console.log('store.keys.length: ', store.keys.length)
+//threshold 
+const maxCount = 5;
+const queryHeight = 20;
+const innerPaddingHeight = 12;
+const baseHeight = maxCount * queryHeight + (maxCount - 1) * innerPaddingHeight;
+const baseRatio = ((maxCount - 1) * innerPaddingHeight) / ((maxCount - 1) * innerPaddingHeight + (maxCount * queryHeight)); 
+
+
+
 
 //margins
 const margins = ref({
@@ -15,42 +25,35 @@ const margins = ref({
 });
 
 const rawWidth = ref(550); // dynamic width and height
-const rawHeight = ref(200); // dynamic width and height 
+const rawHeight = computed(() => baseHeight + margins.value.top - margins.value.bottom)
+// const rawHeight = ref(200); // dynamic width and height 
 
-const paddingInner = ref(0.9)
-const paddingOuter = ref(0.3)
-
-
-const addPaddingInner = computed(() => {
-    if(store.keys.length > 3) {
-        const diff = store.keys.length - 3;
-        return paddingInner.value * diff;
+const paddingInner = computed(() => {
+    if(store.keys.length <= maxCount) {
+        return baseRatio; 
+    } else {
+        return (store.keys.length - 1) * innerPaddingHeight / ((store.keys.length - 1) * innerPaddingHeight + (store.keys.length * queryHeight));
     }
-    return paddingInner.value;
 })
-
-const addPaddingOuter = computed(() => {
-    if(store.keys.length > 3) {
-        // const diff = store.keys.length - 3;
-        return paddingOuter.value * 3;
-    }
-    return paddingOuter.value;
-})
+// const paddingOuter = ref(0.3)
 
 const width = computed(() => rawWidth.value - margins.value.left - margins.value.right)
-const height = computed(() => rawHeight.value - margins.value.top - margins.value.bottom)
+//const height = computed(() => rawHeight.value - margins.value.top - margins.value.bottom)
 
 //computed value to watch the query Hashes
     //if it changes, check if the different of the (13) - 11(threshold) and account to add more length
 const yAxisRescale = computed(() => { 
-    if(store.keys.length > 3) {
-        const diff = store.keys.length - 3;
-        return 20 * diff;
+    if (store.keys.length > maxCount) {
+        const diff = store.keys.length - maxCount;
+        console.log('store.keys.length: ', store.keys.length, 'maxCount: ', maxCount)
+        console.log( 'diff:', diff, ' inner:', innerPaddingHeight, ' query:', queryHeight);
+        console.log(diff * (innerPaddingHeight + queryHeight))
+        return diff * (innerPaddingHeight + queryHeight);
     }
-    return 0;
+    else return 0;
 })
 
-const queryHeight = 20;
+
 
 const refreshGraph = (): void => {
     // remove old graph, basically everything besides the div
@@ -75,9 +78,9 @@ const refreshGraph = (): void => {
     // y axis
     const y = d3.scaleBand()
         .domain(store.keys)
-        .range([0, height.value + yAxisRescale.value])
-        .paddingInner(0.5)
-        .paddingOuter(0.5)
+        .range([0, baseHeight + yAxisRescale.value])
+        .paddingInner(paddingInner.value)
+        // .paddingOuter(0.5)
 
     svg.append('g')
         .call(d3.axisLeft(y).tickFormat((x) => {
@@ -94,7 +97,7 @@ const refreshGraph = (): void => {
             .attr("class", "y-title")
             .attr("transform", "rotate(-90)") //rotate y-axis title vertically
             .attr("text-anchor", "middle") //signify that this y-axis title will position itself relative to the end of its div
-            .attr("x",  -(height.value / 2) - yAxisRescale.value / 2) //position y-axis title relative to the midpoint of the y-axis
+            .attr("x",  -(baseHeight / 2) - yAxisRescale.value / 2) //position y-axis title relative to the midpoint of the y-axis
             .attr("y", -70) //position the y-axis title left of the y-axis labels
             .text("Query Hashes")
             .attr('fill','white')
