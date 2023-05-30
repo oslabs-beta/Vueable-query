@@ -24,17 +24,17 @@ const paddingOuter = ref(0.3)
 const addPaddingInner = computed(() => {
     if(store.keys.length > 3) {
         const diff = store.keys.length - 3;
-        return  paddingInner.value * diff
+        return paddingInner.value * diff;
     }
-    return paddingInner.value
+    return paddingInner.value;
 })
 
 const addPaddingOuter = computed(() => {
     if(store.keys.length > 3) {
         // const diff = store.keys.length - 3;
-        return  paddingOuter.value * 3
+        return paddingOuter.value * 3;
     }
-    return paddingOuter.value
+    return paddingOuter.value;
 })
 
 const width = computed(() => rawWidth.value - margins.value.left - margins.value.right)
@@ -76,8 +76,8 @@ const refreshGraph = (): void => {
     const y = d3.scaleBand()
         .domain(store.keys)
         .range([0, height.value + yAxisRescale.value])
-        .paddingInner(addPaddingInner.value)
-        .paddingOuter(addPaddingOuter.value)
+        .paddingInner(0.5)
+        .paddingOuter(0.5)
 
     svg.append('g')
         .call(d3.axisLeft(y).tickFormat((x) => {
