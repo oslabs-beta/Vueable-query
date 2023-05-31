@@ -1,6 +1,9 @@
 # Vueable-query
+<span align = 'center'>
 
-![Vueable Query Logo](imageurlgoeshere)
+![Vueable Query Logo](/Extension/assets/Vueable_Query_logo_128.png)
+
+</span>
 
 Vueable Query is an easy to use Chrome Extension that provides visualization and performance metrics for programs using [Tanstack Query for Vue](https://github.com/TanStack/query).
 
@@ -25,12 +28,10 @@ Vueable Query is an easy to use Chrome Extension that provides visualization and
 
 
 ## Features
-<!--Gif-->
-![demo](demo_img/initial_Demo.gif)
-- A timeline to visualize the query history
-![demo](demo_img/hover_selection_Demo.gif)
-- A text panel to display all relevant queries under their query key.
+
 ![demo](demo_img/jsonObj_Demo.gif)
+- A timeline to visualize the query history
+- A text panel to display all relevant queries under their query key.
 - Highlighting on click and hover
 - Tooltip displayed on hover 
 
