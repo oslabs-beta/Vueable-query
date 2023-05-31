@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import * as d3 from 'd3';
-import { ref, watch, computed } from 'vue';
+import { ref, watch, computed, onMounted} from 'vue';
 import { useQueryStore } from '../store';
 
 const store = useQueryStore();
@@ -186,7 +186,7 @@ const refreshGraph = (): void => {
             d3.select(e.target).style("cursor", "pointer");
             store.setHoverSelection(d.originalIndex)
         })
-        .on("mouseout", (e, d) => {
+        .on("mouseout", (e) => {
             d3.select(e.target).style("cursor", "");
             store.setHoverSelection(-1);
         })
@@ -243,6 +243,8 @@ const refreshGraph = (): void => {
 watch(() => store.queries, refreshGraph)
 watch(() => store.selection, refreshGraph)
 watch(() => store.hoverSelection, refreshGraph)
+// needed for tests to render d3 without store change
+onMounted(() => refreshGraph());
 
 </script>
 
