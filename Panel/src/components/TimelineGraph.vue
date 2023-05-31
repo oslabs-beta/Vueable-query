@@ -22,8 +22,13 @@ const height = computed(() => rawHeight.value - margins.value.top - margins.valu
 
 const queryHeight = 20;
 
-// TODO fix typing
-const selectionState: { selection?: any, hoverSelection?: any } = {};
+const selectionState: {
+  selection: d3.Selection<d3.BaseType, unknown, HTMLElement, any>,
+  hoverSelection: d3.Selection<d3.BaseType, unknown, HTMLElement, any>
+} = {
+  selection: d3.select('window'),
+  hoverSelection: d3.select('window'),
+};
 
 const refreshGraph = () => {
   // remove old graph, basically everything besides the div
@@ -106,13 +111,6 @@ const refreshGraph = () => {
     //fixed height of bar
     .attr('height', queryHeight)
     .classed('query', true)
-    .attr('fill', (d) => {
-      if (d.originalIndex === store.selection) {
-        return '#E4FDE1';
-      } else if (d.originalIndex === store.hoverSelection) {
-        return '#028090';
-      } else return '#F45B69';
-    })
     .on('mouseover', (e, d) => {
       d3.select(e.target).style("cursor", "pointer");
       store.setHoverSelection(d.originalIndex);
@@ -195,27 +193,25 @@ const refreshGraph = () => {
 
 watch(() => store.queries, refreshGraph)
 watch(() => store.selection, () => {
-  // turn off old selection
-  if (selectionState.hasOwnProperty('selection')) {
-    selectionState.selection.attr('fill', '#F45B69')
-  }
-  // get current selection and reset color
-  const selection = d3.selectAll('.query')
-    //TODO  fix typing
-    .filter((d:any) => d.originalIndex === store.selection)
-    .attr('fill', '#E4FDE1')
- selectionState.selection = selection;
+  // turn off previous selection
+  selectionState.selection
+    .classed('selected', false)
+// get current selection and reset color
+   const selection = d3.selectAll('.query')
+     //TODO  fix typing
+     .filter((d:any) => d.originalIndex === store.selection)
+    .classed('selected', true)
+  selectionState.selection = selection;
 })
 watch(() => store.hoverSelection, () => {
   // turn off old selection
-  if (selectionState.hasOwnProperty('selection')) {
-    selectionState.hoverSelection.attr('fill', '#F45B69')
-  }
+  selectionState.hoverSelection
+    .classed('hover', false);
   // get current selection and reset color
   const hoverSelection = d3.selectAll('.query')
     //TODO  fix typing
     .filter((d:any) => d.originalIndex === store.hoverSelection)
-    .attr('fill', '#028090')
+    .classed('hover', true);
  selectionState.hoverSelection = hoverSelection;
 })
 
@@ -225,5 +221,14 @@ watch(() => store.hoverSelection, () => {
   <div id="graph"></div>
 </template>
 
-<style scoped>
+<style lang="scss">
+.query {
+  fill: #f45b69;
+}
+.query.selected.selected {
+  fill: #E4FDE1;
+}
+.query.hover {
+  fill: #028090;
+}
 </style>
