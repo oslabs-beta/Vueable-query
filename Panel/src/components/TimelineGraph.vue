@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import * as d3 from 'd3';
 import { ref, watch, computed } from 'vue';
 import { useQueryStore } from '../store';
@@ -69,7 +68,7 @@ const selectionState: {
   hoverSelection: d3.select('window'),
 };
 
-const refreshGraph = () => {
+const refreshGraph = (): void => {
   // remove old graph, basically everything besides the div
   d3.selectAll('.query').remove();
   d3.selectAll('.tick').remove();
@@ -88,30 +87,6 @@ const refreshGraph = () => {
     .append('g')
     .attr('transform', `translate(${margins.value.left}, ${margins.value.top})`)
     .classed('graph', true)
-  
-  // y axis
-  const y = d3.scaleBand()
-    .domain(store.keys)
-    .range([0, height.value]);
-const refreshGraph = (): void => {
-    // remove old graph, basically everything besides the div
-    d3.selectAll('.query').remove();
-    d3.selectAll('.tick').remove();
-    d3.selectAll('.domain').remove();
-    d3.selectAll('.graph').remove();
-    
-    // define new graph
-    // create svg canvas; add translated point
-    // assign translated point to variable 'svg'
-    const svg = d3.select('#graph')
-        .append('svg')
-        .attr('height', rawHeight.value + yAxisAddition.value)
-        .attr('width', rawWidth.value)
-        .classed('graph', true)
-        .append('g')
-        .attr('transform', `translate(${margins.value.left}, ${margins.value.top})`)
-        .classed('graph', true)
-
     
     // y axis
     const y = d3.scaleBand()
@@ -213,7 +188,7 @@ const refreshGraph = (): void => {
         .on('mouseover', (e, d) => {
             d3.select(e.target).style("cursor", "pointer");
             store.setHoverSelection(d.originalIndex)
-            tooltipMouseOver(e, d);
+            toolTipMouseOver(e, d);
         })
         .on("mouseout", (e, d) => {
             d3.select(e.target).style("cursor", "");
@@ -253,7 +228,7 @@ const refreshGraph = (): void => {
         .on('mouseover', (e, d) => {
             d3.select(e.target).style("cursor", "pointer");
             store.setHoverSelection(d.originalIndex)
-            tooltipMouseOver(e, d);
+            toolTipMouseOver(e, d);
         })
         .on("mouseout", (e, d) => {
             d3.select(e.target).style("cursor", "");
@@ -265,41 +240,6 @@ const refreshGraph = (): void => {
             store.setSelection(d.originalIndex);
         })
         .on("mousemove", toolTipMouseMove);
-  svg.selectAll('.query')
-    .data(store.queries)
-    // entering a data loop, for each query in queries
-    .enter()
-    .append('rect')
-    //lines 71 and 74 tells where the top left corner of each of the bar lives on the x-axis
-    .attr('x', function(d) {
-      return x(d.startTime);
-    })
-    .attr('y', function(d) {
-      // @ts-ignore d.queryHash is always defined
-      return y(d.queryHash) + y.bandwidth() / 2 - queryHeight / 2;
-    })
-    //width of the bar for either a query or cache hit
-    .attr('width', function(d) {
-      return (x(d.endTime) - x(d.startTime)) || 2;
-    })
-    //fixed height of bar
-    .attr('height', queryHeight)
-    .classed('query', true)
-    .on('mouseover', (e, d) => {
-      d3.select(e.target).style("cursor", "pointer");
-      store.setHoverSelection(d.originalIndex);
-      toolTipMouseOver(e, d);
-    })
-    .on("mouseout", (e, d) => {
-      d3.select(e.target).style("cursor", "");
-      store.setHoverSelection(-1);
-      toolTipMouseOut();
-    })
-    .on("click", (e, d) => {
-      e.stopPropagation();
-      store.setSelection(d.originalIndex);
-    })
-    .on("mousemove", toolTipMouseMove);
 
   // add tooltip
   const padding = 5;
@@ -391,7 +331,6 @@ watch(() => store.hoverSelection, () => {
     .classed('hover', true);
  selectionState.hoverSelection = hoverSelection;
 })
-
 </script>
 
 <template>
