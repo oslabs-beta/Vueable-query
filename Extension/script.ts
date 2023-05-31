@@ -1,4 +1,4 @@
-if(!(window.hasOwnProperty('__VUE__'))){ // check if Vue is running
+if(!(Object.prototype.hasOwnProperty.call(window, '__VUE__'))){ // check if Vue is running
   console.log('Vueable Query Error: Vue app not detected');
 } else if(getQueryClient()) { // check if Tanstack Query is running
   console.log('Vueable Query: Tanstack Query client found');
@@ -65,25 +65,9 @@ if(!(window.hasOwnProperty('__VUE__'))){ // check if Vue is running
 
 
   // send from script.js to content.js
-  function messageWindow ({ event, startTime, endTime, type }: 
-    {event: Event, startTime: number, endTime: number, type: string}) {
-    // console.log('tidied event:\n', 
-    //   { ...event, query: { ...event.query, cache: null, observers: null } }
-    // );
-    //useful information in cache and observer? but we can't include it here because of circular references
-    window.postMessage({
-      source: 'vueable-query-extension',
-      payload: {
-        startTime,
-        endTime,
-        type,
-        //json parse and json stringify necessary because of error, cant send messages. Also remove circular references
-        //https://stackoverflow.com/questions/42376464/uncaught-domexception-failed-to-execute-postmessage-on-window-an-object-co
-        event: JSON.parse(JSON.stringify({ ...event, query: { ...event.query, cache: null, observers: null }}))
-      }
-    }, '*'); // second arg takes in a target origin, which is usually a uri that will be able to receive the message sent as first arg 
-  }
+  
 }
+
 
 
 function getQueryClient () {
@@ -92,7 +76,7 @@ function getQueryClient () {
     const all = document.querySelectorAll('*');
     let el;
     for (let i = 0; i < all.length; i++) {
-      if (all[i].hasOwnProperty('__vue_app__')) {
+      if (Object.prototype.hasOwnProperty.call(all[i], '__vue_app__')) {
         el = all[i];
         break;
       }
@@ -105,4 +89,23 @@ function getQueryClient () {
     console.log('Vueable Query Error: Tanstack Query Client not detected');
     return false;
   }
+}
+
+function messageWindow ({ event, startTime, endTime, type }: 
+  {event: Event, startTime: number, endTime: number, type: string}) {
+  // console.log('tidied event:\n', 
+  //   { ...event, query: { ...event.query, cache: null, observers: null } }
+  // );
+  //useful information in cache and observer? but we can't include it here because of circular references
+  window.postMessage({
+    source: 'vueable-query-extension',
+    payload: {
+      startTime,
+      endTime,
+      type,
+      //json parse and json stringify necessary because of error, cant send messages. Also remove circular references
+      //https://stackoverflow.com/questions/42376464/uncaught-domexception-failed-to-execute-postmessage-on-window-an-object-co
+      event: JSON.parse(JSON.stringify({ ...event, query: { ...event.query, cache: null, observers: null }}))
+    }
+  }, '*'); // second arg takes in a target origin, which is usually a uri that will be able to receive the message sent as first arg 
 }
