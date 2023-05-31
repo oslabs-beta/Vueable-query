@@ -5,16 +5,18 @@ import { ref, watch, computed } from 'vue';
 import { useQueryStore } from '../store';
 
 const store = useQueryStore();
-console.log('store.keys.length: ', store.keys.length)
-//threshold 
-const maxCount = 5;
+//set a threshold of y-axis ticks before triggering a yaxis rerender
+const maxCount = 10;
+//set height of data points on graph
 const queryHeight = 20;
+//set vertical padding between data points
 const innerPaddingHeight = 12;
+//calculate baseHeight to determine range of yaxis before crossing threshold 
 const baseHeight = maxCount * queryHeight + (maxCount - 1) * innerPaddingHeight;
-const baseRatio = ((maxCount - 1) * innerPaddingHeight) / ((maxCount - 1) * innerPaddingHeight + (maxCount * queryHeight)); 
-
-
-
+//calulate inner padding ratio for scale bands before crossing threshold
+const baseInnerRatio = ((maxCount - 1) * innerPaddingHeight) / ((maxCount - 1) * innerPaddingHeight + (maxCount * queryHeight)); 
+//set constant outer padding ratio for scale bands before crossing threshold
+const baseOuterRatio = 0.4;
 
 //margins
 const margins = ref({
@@ -24,36 +26,40 @@ const margins = ref({
     left: 105 
 });
 
-const rawWidth = ref(550); // dynamic width and height
-const rawHeight = computed(() => baseHeight + margins.value.top - margins.value.bottom)
-// const rawHeight = ref(200); // dynamic width and height 
+// dynamic svg width
+const rawWidth = ref(550); 
+//dynamic svg height
+const rawHeight = computed(() => baseHeight + margins.value.top - margins.value.bottom) 
+//calculate width of timeline graph
+const width = computed(() => rawWidth.value - margins.value.left - margins.value.right)
 
+//calculate computed padding inner value
 const paddingInner = computed(() => {
-    if(store.keys.length <= maxCount) {
-        return baseRatio; 
+    if (store.keys.length <= maxCount) {
+        return baseInnerRatio; 
     } else {
         return (store.keys.length - 1) * innerPaddingHeight / ((store.keys.length - 1) * innerPaddingHeight + (store.keys.length * queryHeight));
     }
 })
-// const paddingOuter = ref(0.3)
+//calculate computed padding outer value
+const paddingOuter = computed(() => {
+    if (store.keys.length < maxCount) {
+        return baseOuterRatio;
+    } else {
+        const spacesOnGraph = ((store.keys.length - 1) * innerPaddingHeight) + (queryHeight * store.keys.length)
+        return spacesOnGraph / (spacesOnGraph + ((width.value - store.keys.length) / 2))
+        // return baseOuterRatio;
+    }
+}) 
 
-const width = computed(() => rawWidth.value - margins.value.left - margins.value.right)
-//const height = computed(() => rawHeight.value - margins.value.top - margins.value.bottom)
-
-//computed value to watch the query Hashes
-    //if it changes, check if the different of the (13) - 11(threshold) and account to add more length
-const yAxisRescale = computed(() => { 
+//calculate computed additional y-axis length after crossing threshold  
+const yAxisAddition = computed(() => { 
     if (store.keys.length > maxCount) {
         const diff = store.keys.length - maxCount;
-        console.log('store.keys.length: ', store.keys.length, 'maxCount: ', maxCount)
-        console.log( 'diff:', diff, ' inner:', innerPaddingHeight, ' query:', queryHeight);
-        console.log(diff * (innerPaddingHeight + queryHeight))
         return diff * (innerPaddingHeight + queryHeight);
     }
     else return 0;
 })
-
-
 
 const refreshGraph = (): void => {
     // remove old graph, basically everything besides the div
@@ -67,7 +73,7 @@ const refreshGraph = (): void => {
     // assign translated point to variable 'svg'
     const svg = d3.select('#graph')
         .append('svg')
-        .attr('height', rawHeight.value + yAxisRescale.value)
+        .attr('height', rawHeight.value + yAxisAddition.value)
         .attr('width', rawWidth.value)
         .classed('graph', true)
         .append('g')
@@ -78,26 +84,25 @@ const refreshGraph = (): void => {
     // y axis
     const y = d3.scaleBand()
         .domain(store.keys)
-        .range([0, baseHeight + yAxisRescale.value])
+        .range([0, baseHeight + yAxisAddition.value])
         .paddingInner(paddingInner.value)
-        // .paddingOuter(0.5)
+        .paddingOuter(paddingOuter.value)
 
     svg.append('g')
         .call(d3.axisLeft(y).tickFormat((x) => {
             //create a var that is the cutoff point for y-axis labels
-                //can decide to change later
             const maxLength = 10; 
             if(x.length <= maxLength) { //check if query hash is less than 10 char
                 return x; //display query hash as is
             } else {
-                return x.slice(0, maxLength) + '...';
+                return x.slice(0, maxLength) + '...'; //truncate label
             }
         }))
         .append("text")
             .attr("class", "y-title")
             .attr("transform", "rotate(-90)") //rotate y-axis title vertically
             .attr("text-anchor", "middle") //signify that this y-axis title will position itself relative to the end of its div
-            .attr("x",  -(baseHeight / 2) - yAxisRescale.value / 2) //position y-axis title relative to the midpoint of the y-axis
+            .attr("x",  -(baseHeight / 2) - yAxisAddition.value / 2) //position y-axis title relative to the midpoint of the y-axis
             .attr("y", -70) //position the y-axis title left of the y-axis labels
             .text("Query Hashes")
             .attr('fill','white')
@@ -121,8 +126,7 @@ const refreshGraph = (): void => {
             let hour = Math.floor(minute / 60);
             //check if ms is over an hour
             if(x.valueOf() >= 3.6e+6) {
-                const milliSecond = x.valueOf()-(hour * 3_600_000);
-                return `${hour}h:${(milliSecond.valueOf() / 1_000 / 60).toPrecision(1)}m` //convert ms to hr and round to 2 sig figs
+                return `${hour}h:${(x.valueOf()-(hour * 3_600_000) / 1_000 / 60).toPrecision(1)}m`
             }
             //check if current time in ms is greater than a minute
             else if(x.valueOf() >= 60_000) { 
