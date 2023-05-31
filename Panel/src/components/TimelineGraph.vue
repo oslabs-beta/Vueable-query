@@ -145,6 +145,7 @@ const refreshGraph = () => {
     .classed('tooltip text', true)
   const tooltipText = tooltipTextRoot.append('xhtml:div')
     .append('xhtml:div')
+    .style('display', 'flex')
     .style('visibility', 'hidden')
     .style('text-align', 'center')
     .style('padding', `${padding}px`)
@@ -158,9 +159,11 @@ const refreshGraph = () => {
 
   function toolTipMouseOver (_: Event, d: FormattedQuery) {
     const prettyText = (d: FormattedQuery) => (
-      `${d.queryHash}</br>
-      dur: ${d.duration}</br>
-      type: ${d.type}`
+      `<p>
+        ${d.queryHash}</br>
+        dur: ${d.duration}</br>
+        type: ${d.type}
+      </p>`
     );
     tooltipText
       .style('visibility', 'visible')
