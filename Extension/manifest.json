@@ -9,6 +9,9 @@
     "tabs",
     "webNavigation"
   ], 
+  "icons": {
+    "128": "/assets/Vueable_Query_logo_128.png"
+  },
   "web_accessible_resources": [{
     "resources": ["script.js"],
     "matches": ["<all_urls>"]
