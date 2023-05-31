@@ -20,7 +20,7 @@
   >
     <span class="cache-info">
       &emsp; &rarr; Cache hit for key: 
-      <span class="hash">{{ JSON.parse(c.queryHash) }}</span>
+      <span class="hash">{{ (c.queryHash) }}</span>
       at {{ c.startTime }}ms
       <br/>
     </span>

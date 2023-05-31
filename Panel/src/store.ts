@@ -2,10 +2,6 @@ import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
 import type { Ref } from 'vue';
 export const useQueryStore = defineStore('query', () => {
-  // log ref
-  // destructure from ref
-  // const queryKey = ref(0)
-  //ref hook is similar to useState
 
   // ---definitions---
   const data: Ref<Message[]> = ref([]);
@@ -14,19 +10,12 @@ export const useQueryStore = defineStore('query', () => {
   const hoverSelection: Ref<number> = ref(-1)
   const pageStartTime: Ref<number> = ref(-1); //when script first loads up
 
-  // const number = ref(1)                           - state
-  // const double = computed(()=>number.value * 2);  - dependant on state
-  // const two = number.value * 2                    - just equals 2, no dependancy
-  // <div>{{ number }}</div>                         - rerender when number changes
-  // <div>{{ double }}</div>                         - also rerender when number changes, since it is computed from number
-  // <div>{{ two }}</div>                            -  2
-
 
   // ---setters---
   // setters can't be arrow functions
-  function addPageStartTime(time: number): void {
+  function setPageStartTime(time: number): void {
     pageStartTime.value = time;
-    //console.log('pageStartTime: ', pageStartTime.value)
+    // console.log('pageStartTime: ', pageStartTime.value)
   }
 
   function addNewQuery(message: Message): void {
@@ -42,6 +31,7 @@ export const useQueryStore = defineStore('query', () => {
 
   function setSelection(index: number): void {
     selection.value = index;
+    console.log(selection.value)
   }
 
   function setHoverSelection(index: number): void {
@@ -106,5 +96,6 @@ export const useQueryStore = defineStore('query', () => {
   const cacheQueries = computed<FormattedQuery[]>(() => queries.value.filter((obj):boolean => (obj.type === 'cache')));
 
 
-  return { keys, queries, addNewQuery, resetHistory, endQueries, cacheQueries, setSelection, setHoverSelection, selection, hoverSelection, addPageStartTime, lastEndTime, pageStartTime}
+  return {data, keys, queries, addNewQuery, resetHistory, endQueries, cacheQueries, setSelection, setHoverSelection,
+    pageStartTime, selection, hoverSelection, setPageStartTime,lastEndTime }
 })

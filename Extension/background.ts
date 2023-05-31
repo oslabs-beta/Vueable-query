@@ -51,13 +51,13 @@ chrome.runtime.onConnect.addListener(function (port) { // listen for new ports
 
 // Receive message from content script and relay to the devTools page for the current tab
 // content.js -> here -> devtool panel
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+chrome.runtime.onMessage.addListener(function(request, sender) {
   // Messages from content scripts should have sender.tab set
   if (sender.tab && sender.tab.id !== undefined) {
     const tabId = sender.tab.id;
-    if (!histories.hasOwnProperty(tabId)) histories[tabId] = [];
+    if (!Object.prototype.hasOwnProperty.call(histories, tabId)) histories[tabId] = [];
     histories[tabId].push(request);
-    if (connections.hasOwnProperty(tabId)) {
+    if (Object.prototype.hasOwnProperty.call(connections, tabId)) {
       connections[tabId].postMessage(request);
     } else {
       console.log("Tab not found in connection list.");
@@ -69,11 +69,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 });
 
 function refreshHistoryConditionally (tabId: number) {
-  if (histories.hasOwnProperty(tabId)) {
+  if (Object.prototype.hasOwnProperty.call(histories, tabId)) {
     histories[tabId] = [];
     // send message to devTool store to reset
     // could also reset startTime
-    if (connections.hasOwnProperty(tabId)) {
+    if (Object.prototype.hasOwnProperty.call(connections, tabId)) {
       connections[tabId].postMessage({
         source: 'vueable-query-extension',
         payload: {
