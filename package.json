@@ -6,8 +6,7 @@
     "dev": "vite ",
     "demo": "npm i --prefix examples/basic && npm run dev --prefix examples/basic",
     "build": "npm run type-check && npm run build-only",
-    "preview": "vite preview",
-    "test:unit": "vitest",
+    "test": "vitest",
     "build-only": "vite build && vite build -c vite.config.extension.ts",
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false && tsc --noEmit -p tsconfig.node.json",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"

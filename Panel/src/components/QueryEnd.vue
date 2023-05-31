@@ -2,7 +2,7 @@
   import { useQueryStore } from '../store';
   import { VueDd } from 'vue-dd';
   const store = useQueryStore(); 
-  const props = defineProps<{
+  defineProps<{
     c: FormattedQuery
   }>()
 </script>

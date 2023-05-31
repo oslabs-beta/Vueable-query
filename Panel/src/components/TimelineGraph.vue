@@ -115,7 +115,7 @@ const refreshGraph = (): void => {
             d3.select(e.target).style("cursor", "pointer");
             store.setHoverSelection(d.originalIndex)
         })
-        .on("mouseout", (e, d) => {
+        .on("mouseout", (e) => {
             d3.select(e.target).style("cursor", "");
             store.setHoverSelection(-1);
         })
