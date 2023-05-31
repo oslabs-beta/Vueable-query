@@ -26,7 +26,7 @@ Vueable Query is an easy to use Chrome Extension that provides visualization and
 
 ## Features
 <!--Gif-->
-<p><img > </p>
+![demo](img/giphy.gif)
 - A timeline to visualize the query history
 - A text panel to display all relevant queries under their query key.
 - Highlighting on click and hover
