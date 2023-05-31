@@ -143,7 +143,7 @@ const refreshGraph = () => {
     .attr('x', 0) // should initialize to mouse position
     .attr('y', 0) // should initialize to mouse position
     .classed('tooltip text', true)
-  const tooltipText = tooltipTextRoot.append('xhtml:div')
+  const tooltipText = tooltipTextRoot
     .append('xhtml:div')
     .style('display', 'flex')
     .style('visibility', 'hidden')
