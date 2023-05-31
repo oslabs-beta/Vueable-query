@@ -26,14 +26,16 @@ Vueable Query is an easy to use Chrome Extension that provides visualization and
 
 ## Features
 <!--Gif-->
+<p><img > </p>
 - A timeline to visualize the query history
 - A text panel to display all relevant queries under their query key.
-- Highlight and tooltip display on hover
-- 
+- Highlighting on click and hover
+- Tooltip displayed on hover 
 
 ## Example Program
 - Run with `npm run demo`
 - Navigate to localhost:5173
+
 ## Usage
 - View a program running Tanstack Query for Vue or load up the example program above
 - Open up the Dev Tools for Chrome
