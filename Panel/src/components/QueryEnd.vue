@@ -20,9 +20,9 @@
     class="query-text"  
   >
     <span class="cache-info">
-      &emsp; &rarr; Fetch Query at:
+      &emsp; &rarr; Fetch Query at: 
       <span class="hash">{{ c.queryHash }}</span>
-      at {{ c.startTime }}ms
+       at {{ c.startTime }}ms
       &emsp;
       <vue-dd
         class="text-panel-object"
@@ -49,6 +49,7 @@
 }
 .cache-info {
     font-size: 16px;
+    display: flex;
   }
 .hash {
     color: #F45B69;
