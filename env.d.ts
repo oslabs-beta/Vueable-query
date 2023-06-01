@@ -26,6 +26,7 @@ interface Event {
 
 interface Query {
   queryHash: string;
+  isStale: () => boolean;
 }
 
 interface FormattedQuery {
