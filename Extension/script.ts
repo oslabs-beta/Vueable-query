@@ -1,15 +1,13 @@
+// script.ts is the injected script that detects if the page is running Tanstack Query for Vue
+// if found, it attaches a listener to the querycache and sends messages to content.js
+
 if(!(Object.prototype.hasOwnProperty.call(window, '__VUE__'))){ // check if Vue is running
   console.log('Vueable Query Error: Vue app not detected');
 } else if(getQueryClient()) { // check if Tanstack Query is running
   console.log('Vueable Query: Tanstack Query client found');
-  
-  //rest of program goes here
+
   const queryClient = getQueryClient();
-  //document.getElementById('app').__vue_app__._context.app._context.provides.VUE_QUERY_CLIENT; //extracting queryClient then assign to a constant
   const queryCache = queryClient.getQueryCache(); // central cache that we attach observer to 
-
-  //querystorage holds the start time value at the key queryHash
-
   const defaultStart = Date.now(); //once script loads, set a default start time
   //send message with the default start time
   window.postMessage({ // post message to window that the webpage is on (chrome window)
@@ -19,55 +17,45 @@ if(!(Object.prototype.hasOwnProperty.call(window, '__VUE__'))){ // check if Vue 
       type: 'pageStartTime' 
     }
   });
+  //event.type, event.action?.type, event.query.isStale());
+  //start is updated fetch true
+  // end is updated success true
+  // cache hit is oberverresultsupdated false -> observer added
 
   //  queryHash, [start, end            ]
   // Map<string, [date, date | undefined]>
-  const queryStorage = new Map<string, [number, number]>(); //use map to track the history of queries
+  const queryStorage = new Map<string, number>(); //use map to track the start Time
+  let queryUpdateForCache = false;
   // post messages to the window
-  const queryHasBeenSeen = (queryHash: string) => queryStorage.has(queryHash);
   const callback = (event: Event) => {
     // new query (either fresh or after invalidation)
-    if (event.type === 'added') {
+    console.log(event.query.queryHash, event.type, event.action?.type, event.query.isStale());
+
+    //for fetch requests
+    if (event.type === 'updated' && event.action?.type === 'fetch') {
       // record start time
-      queryStorage.set(event.query.queryHash, [Date.now(), -1]) //when a query first called, set its queryHash and start time inside map
+      queryStorage.set(event.query.queryHash, Date.now()) //when a query first called, set its queryHash and start time inside map
       // messageWindow({ event, startTime: queryStorage.get(event.query.queryHash)[0], endTime: undefined, type: 'start' } );
     } else if ((event.type === 'updated' && event.action.type === 'success')) { // when fetch call returns and updates cache 
-      let startTime: number, endTime: number; //initialize start and end time variables
-      if(queryHasBeenSeen(event.query.queryHash)){ // check if we've already seen query
-        // @ts-ignore array destructuring from a map doesn't play well with ts
-        [startTime, endTime] = queryStorage.get(event.query.queryHash); // grab its start and end time and save to startTime & endTime variables
-      } else {
-        //assuming query was added before script ran, initalize start time to when script loads
-        startTime = defaultStart;
-        endTime = -1;
-      }
-      // Query started, but no end time, so we know this update is the end
-      if (endTime === -1) {
-        // record end time
-        endTime = Date.now();
-        queryStorage.set(event.query.queryHash, [startTime, endTime])
-        messageWindow(
-          { event, startTime, endTime, type: 'end' }
-        );
-        // end time already recorded, so cache hit
-      } else {
-        // return only time accessed
-        startTime = endTime = Date.now();
-        messageWindow({ event, startTime, endTime, type: 'cache' });
-      }
-    }   
-  }
+      const startTime = queryStorage.has(event.query.queryHash) ? queryStorage.get(event.query.queryHash)! : defaultStart
+      const endTime = Date.now();
+      messageWindow({ event, startTime, endTime, type: 'end' });
+    } 
+      
+    // keep track of cache hits
+      //event.type, event.action?.type, event.query.isStale());
+  //start is updated fetch true
+  // end is updated success true
+  // cache hit is oberverresultsupdated false -> observer added
+    if(queryUpdateForCache && event.type === 'observerAdded'){
+      const time = Date.now();
+      messageWindow({ event, startTime: time, endTime:time, type: 'cache' });
+    }
+    queryUpdateForCache = (event.type === 'observerResultsUpdated' && event.query.isStale() === false);
+
+  }  //callback 
   queryCache.subscribe(callback) // subscribes the callback to query cache as an observer
-
-  // event added -> record the start time
-  // event updated and success -> mark end time. If we marked a start time earlier and no end time, then this is a query
-  // If we already marked start and end -> 'cache hit'
-
-
-  // send from script.js to content.js
-  
 }
-
 
 
 function getQueryClient () {
@@ -97,6 +85,7 @@ function messageWindow ({ event, startTime, endTime, type }:
   //   { ...event, query: { ...event.query, cache: null, observers: null } }
   // );
   //useful information in cache and observer? but we can't include it here because of circular references
+  //can send event.action.data if it exists
   window.postMessage({
     source: 'vueable-query-extension',
     payload: {
@@ -105,7 +94,7 @@ function messageWindow ({ event, startTime, endTime, type }:
       type,
       //json parse and json stringify necessary because of error, cant send messages. Also remove circular references
       //https://stackoverflow.com/questions/42376464/uncaught-domexception-failed-to-execute-postmessage-on-window-an-object-co
-      event: JSON.parse(JSON.stringify({ ...event, query: { ...event.query, cache: null, observers: null }}))
+      event: JSON.parse(JSON.stringify({query: { ...event.query, cache: null, observers: null }}))
     }
   }, '*'); // second arg takes in a target origin, which is usually a uri that will be able to receive the message sent as first arg 
 }
