@@ -84,6 +84,7 @@ const refreshGraph = (): void => {
     .attr('height', rawHeight.value)
     .attr('width', rawWidth.value)
     .classed('graph', true)
+    .on("mousemove", toolTipMouseMove)
     .append('g')
     .attr('transform', `translate(${margins.value.left}, ${margins.value.top})`)
     .classed('graph', true)
@@ -199,7 +200,6 @@ const refreshGraph = (): void => {
             e.stopPropagation();
             store.setSelection(d.originalIndex);
         })
-      .on("mousemove", toolTipMouseMove);
     //circle
     shapes.append("circle")
         //only add circles if rect shrink to at least 2px
@@ -239,7 +239,6 @@ const refreshGraph = (): void => {
             e.stopPropagation();
             store.setSelection(d.originalIndex);
         })
-        .on("mousemove", toolTipMouseMove);
 
   // add tooltip
   const padding = 5;
@@ -273,7 +272,7 @@ const refreshGraph = (): void => {
 
   function toolTipMouseOver (_: Event, d: FormattedQuery) {
     const prettyText = (d: FormattedQuery) => (
-      `<p>
+      `<p style="text-align: left">
         ${d.queryHash}</br>
         dur: ${d.duration}</br>
         type: ${d.type}
@@ -290,18 +289,20 @@ const refreshGraph = (): void => {
   }
   function toolTipMouseMove (e: Event) {
     const distance = 7;
-    const [x, y] = d3.pointer(e);
+    let [x, y] = d3.pointer(e);
+    x = x - margins.value.left;
+    y = y - margins.value.top;
     const xBoundary = width.value;
     const yBoundary = 0;
     // x reset
     if (x + distance + ttWidth >= xBoundary) {
-      tooltipTextRoot.attr('x', xBoundary - ttWidth - padding)
+      tooltipTextRoot.attr('x', x- ttWidth - padding - distance);
     } else {
       tooltipTextRoot.attr('x', x + distance);
     }
     // y reset
     if (y - distance - ttHeight <= yBoundary) {
-      tooltipTextRoot.attr('y', yBoundary + padding);
+      tooltipTextRoot.attr('y', y + padding + distance);
     } else {
       tooltipTextRoot.attr('y', y - ttHeight - distance);
     }
