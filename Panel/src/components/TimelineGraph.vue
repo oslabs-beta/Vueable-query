@@ -198,7 +198,7 @@ const refreshGraph = (): void => {
     shapes.append("circle")
         //only add circles if rect shrink to at least 2px
         .filter(function(d) {
-            return (x(d.endTime) === x(d.startTime));
+            return (x(d.endTime) - x(d.startTime) <= 2);
         })
         .attr('cx', function(d) {
             //create var to hold the pixel width of the rect
