@@ -9,7 +9,6 @@ const pinia = createPinia();
 app.use(pinia);
 app.mount('#app');
 
-
 import { useQueryStore } from './store'
 const store = useQueryStore();
 
@@ -27,15 +26,11 @@ backgroundPageConnection.postMessage({
 //check querykey and messages for concurrent ones
 // background.js -> here
 backgroundPageConnection.onMessage.addListener((message: Message) => {
-//  console.log('got a message in main.ts: ', message)
+
   const { startTime, type} = message.payload;
   if(type === 'pageStartTime') {
     store.setPageStartTime(startTime)
-  } else if (type === 'resetHistory') {
-//    console.log('request to reset History');
-    store.resetHistory();
   } else {
-//    console.log('main.ts: message received at its destination!', startTime, endTime, type, event.query.queryHash, message);
     store.addNewQuery(message);
   }
 });

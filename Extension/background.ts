@@ -6,20 +6,7 @@ const histories: {
   [tabId: string]: Message[]
 } = {};
 
-// when a tab closes, if it's the tab with active history, clear history
-chrome.tabs.onRemoved.addListener(refreshHistoryConditionally);
 
-/* when navigating to the page for any reason, if it's the tab with active */
-/* history, clear history; this conditional includes reload. */
-/* May want to always refresh history on any kind of re-access and replace */
-/* onRemoved? */
-chrome.webNavigation.onCommitted.addListener(
-  ({ tabId, transitionType }) => {
-    if (['reload'].includes(transitionType)) {
-      refreshHistoryConditionally(tabId)
-    }
-  }
-);
 
 chrome.runtime.onConnect.addListener(function (port) { // listen for new ports
   const extensionListener = function ({ name, tabId }: {name: string, tabId: string}) { // listen for messages
@@ -67,20 +54,3 @@ chrome.runtime.onMessage.addListener(function(request, sender) {
   }
   return true;
 });
-
-function refreshHistoryConditionally (tabId: number) {
-  if (Object.prototype.hasOwnProperty.call(histories, tabId)) {
-    histories[tabId] = [];
-    // send message to devTool store to reset
-    // could also reset startTime
-    if (Object.prototype.hasOwnProperty.call(connections, tabId)) {
-      connections[tabId].postMessage({
-        source: 'vueable-query-extension',
-        payload: {
-          startTime: Date.now(),
-          type: 'resetHistory',
-        }
-      });
-    }
-  }
-}
