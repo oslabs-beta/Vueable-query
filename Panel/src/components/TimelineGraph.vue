@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import * as d3 from 'd3';
 import { ref, watch, computed, onMounted} from 'vue';
 import { useQueryStore } from '../store';
@@ -10,14 +9,15 @@ const maxCount = 10;
 //set height of data points on graph
 const queryHeight = 20;
 //set vertical padding between data points
-const innerPaddingHeight = 12;
+const innerPaddingHeight = 20;
 //calculate baseHeight to determine range of yaxis before crossing threshold 
 const baseHeight = maxCount * queryHeight + (maxCount - 1) * innerPaddingHeight;
 //calulate inner padding ratio for scale bands before crossing threshold
 const baseInnerRatio = ((maxCount - 1) * innerPaddingHeight) / ((maxCount - 1) * innerPaddingHeight + (maxCount * queryHeight)); 
 //set constant outer padding ratio for scale bands before crossing threshold
 const baseOuterRatio = 0.4;
-
+//set radius of circle
+const circleRadius = 3.5;
 //margins
 const margins = ref({
     top: 50,
@@ -61,25 +61,34 @@ const yAxisAddition = computed(() => {
     else return 0;
 })
 
-const refreshGraph = (): void => {
-    // remove old graph, basically everything besides the div
-    d3.selectAll('.query').remove();
-    d3.selectAll('.tick').remove();
-    d3.selectAll('.domain').remove();
-    d3.selectAll('.graph').remove();
-    
-    // define new graph
-    // create svg canvas; add translated point
-    // assign translated point to variable 'svg'
-    const svg = d3.select('#graph')
-        .append('svg')
-        .attr('height', rawHeight.value + yAxisAddition.value)
-        .attr('width', rawWidth.value)
-        .classed('graph', true)
-        .append('g')
-        .attr('transform', `translate(${margins.value.left}, ${margins.value.top})`)
-        .classed('graph', true)
+const selectionState: {
+  selection: d3.Selection<d3.BaseType, unknown, HTMLElement, any>,
+  hoverSelection: d3.Selection<d3.BaseType, unknown, HTMLElement, any>
+} = {
+  selection: d3.select('window'),
+  hoverSelection: d3.select('window'),
+};
 
+const refreshGraph = (): void => {
+  // remove old graph, basically everything besides the div
+  d3.selectAll('.query').remove();
+  d3.selectAll('.tick').remove();
+  d3.selectAll('.domain').remove();
+  d3.selectAll('.graph').remove();
+  d3.selectAll('.tooltip').remove();
+  
+  // define new graph
+  // create svg canvas; add translated point
+  // assign translated point to variable 'svg'
+  const svg = d3.select('#graph')
+    .append('svg')
+    .attr('height', rawHeight.value)
+    .attr('width', rawWidth.value)
+    .classed('graph', true)
+    .on("mousemove", toolTipMouseMove)
+    .append('g')
+    .attr('transform', `translate(${margins.value.left}, ${margins.value.top})`)
+    .classed('graph', true)
     
     // y axis
     const y = d3.scaleBand()
@@ -156,7 +165,10 @@ const refreshGraph = (): void => {
             .attr('font-size', '17px')
 
     //create a shapes variable
-    const shapes = svg.selectAll(".shapes").data(store.queries).enter()
+    const shapes = svg
+      .selectAll('.shapes')
+      .data(store.queries)
+      .enter()
     //render rectangle for query/cache hits
     shapes.append("rect")
         .attr('x', function(d) {
@@ -175,20 +187,15 @@ const refreshGraph = (): void => {
         //fixed height of bar
         .attr('height', queryHeight)
         .classed('query', true)
-        .attr('fill', (d) => {
-            if (d.originalIndex === store.selection) {
-                return '#E4FDE1';
-            } else if (d.originalIndex === store.hoverSelection) {
-                return '#028090';
-            } else return '#F45B69';
-        })
         .on('mouseover', (e, d) => {
             d3.select(e.target).style("cursor", "pointer");
             store.setHoverSelection(d.originalIndex)
+            toolTipMouseOver(e, d);
         })
         .on("mouseout", (e) => {
             d3.select(e.target).style("cursor", "");
             store.setHoverSelection(-1);
+            toolTipMouseOut();
         })
         .on("click", (e, d) => {
             e.stopPropagation();
@@ -198,13 +205,13 @@ const refreshGraph = (): void => {
     shapes.append("circle")
         //only add circles if rect shrink to at least 2px
         .filter(function(d) {
-            return (x(d.endTime) === x(d.startTime));
+            return (x(d.endTime) - x(d.startTime) <= 2);
         })
         .attr('cx', function(d) {
             //create var to hold the pixel width of the rect
             const widthPX = (x(d.endTime) - x(d.startTime))
             //if pixel is between length of 1 to 2 px
-                //subtract 0.5px to align circle ontop rect
+              //subtract 0.5px to align circle ontop rect
             if ((widthPX > 1)) {
                 return x(d.endTime) - 0.5; 
             }
@@ -212,51 +219,140 @@ const refreshGraph = (): void => {
             return x(d.endTime);
         })
         .attr('cy', function(d) {
+            if(d.startTime === d.endTime) {
+              // @ts-ignore d.queryHash is always defined
+              return y(d.queryHash) + y.bandwidth() / 2 + queryHeight / 2 + circleRadius;
+            }
             // @ts-ignore d.queryHash is always defined
-            return y(d.queryHash) + y.bandwidth() / 2 - queryHeight / 2 - 2 ;
+            return y(d.queryHash) + y.bandwidth() / 2 - queryHeight / 2 - circleRadius;
         })
-        .attr('r', 3.5)
+        .attr('r', circleRadius)
         //fixed height of bar
         .attr('height', queryHeight)
         .classed('query', true)
-        .attr('fill', (d) => {
-            if (d.originalIndex === store.selection) {
-                return '#E4FDE1';
-            } else if (d.originalIndex === store.hoverSelection) {
-                return '#028090';
-            } else return '#F45B69';
-        })
         .on('mouseover', (e, d) => {
             d3.select(e.target).style("cursor", "pointer");
             store.setHoverSelection(d.originalIndex)
+            toolTipMouseOver(e, d);
         })
         .on("mouseout", (e, d) => {
             d3.select(e.target).style("cursor", "");
             store.setHoverSelection(-1);
+            toolTipMouseOut();
         })
         .on("click", (e, d) => {
             e.stopPropagation();
             store.setSelection(d.originalIndex);
         })
+
+  // add tooltip
+  const padding = 5;
+  const ttWidth = 100;
+  const ttHeight = 100;
+
+  const tooltip = svg.append('g')
+    .classed('tooltip', true)
+
+  /* foreignObject suggestion taken from */
+  /* https://stackoverflow.com/questions/24784302/wrapping-text-in-d3 */
+  const tooltipTextRoot = tooltip.append('foreignObject')
+    .style('width', ttWidth)
+    .style('height', ttHeight)
+    .attr('x', 0) // should initialize to mouse position
+    .attr('y', 0) // should initialize to mouse position
+    .classed('tooltip text', true)
+  const tooltipText = tooltipTextRoot
+    .append('xhtml:div')
+    .style('display', 'flex')
+    .style('visibility', 'hidden')
+    .style('text-align', 'center')
+    .style('padding', `${padding}px`)
+    .style('font-size', '12px')
+    .style('overflow-y', 'auto')
+    .style('color', 'black')
+    .style('background-color', 'white')
+    .style('border-radius', '5px')
+    .style('box-sizing', 'border-box')
+    .html('')
+
+  function toolTipMouseOver (_: Event, d: FormattedQuery) {
+    const prettyText = (d: FormattedQuery) => (
+      `<p style="text-align: left">
+        ${d.queryHash}</br>
+        dur: ${d.duration}</br>
+        type: ${d.type}
+      </p>`
+    );
+    tooltipText
+      .style('visibility', 'visible')
+      .html(prettyText(d))
+  }
+  function toolTipMouseOut () {
+    tooltipText
+      .style('visibility', 'hidden')
+      .html('')
+  }
+  function toolTipMouseMove (e: Event) {
+    const distance = 7;
+    let [x, y] = d3.pointer(e);
+    x = x - margins.value.left;
+    y = y - margins.value.top;
+    const xBoundary = width.value;
+    const yBoundary = 0;
+    // x reset
+    if (x + distance + ttWidth >= xBoundary) {
+      tooltipTextRoot.attr('x', x- ttWidth - padding - distance);
+    } else {
+      tooltipTextRoot.attr('x', x + distance);
+    }
+    // y reset
+    if (y - distance - ttHeight <= yBoundary) {
+      tooltipTextRoot.attr('y', y + padding + distance);
+    } else {
+      tooltipTextRoot.attr('y', y - ttHeight - distance);
+    }
+  } 
 }
 
 watch(() => store.queries, refreshGraph)
-watch(() => store.selection, refreshGraph)
-watch(() => store.hoverSelection, refreshGraph)
+watch(() => store.selection, () => {
+  // turn off previous selection
+  selectionState.selection
+    .classed('selected', false)
+// get current selection and reset color
+   const selection = d3.selectAll('.query')
+     //TODO  fix typing
+     .filter((d:any) => d.originalIndex === store.selection)
+    .classed('selected', true)
+  selectionState.selection = selection;
+})
+watch(() => store.hoverSelection, () => {
+  // turn off old selection
+  selectionState.hoverSelection
+    .classed('hover', false);
+  // get current selection and reset color
+  const hoverSelection = d3.selectAll('.query')
+    //TODO  fix typing
+    .filter((d:any) => d.originalIndex === store.hoverSelection)
+    .classed('hover', true);
+ selectionState.hoverSelection = hoverSelection;
+})
 // needed for tests to render d3 without store change
 onMounted(() => refreshGraph());
-
 </script>
 
 <template>
-    <div id="graph"></div>
+  <div id="graph"></div>
 </template>
 
-<style scoped>
-    rect{
-        cursor: pointer;
-    }
-    .query{
-        cursor: pointer;
-    }
+<style lang="scss">
+.query {
+  fill: #f45b69;
+}
+.query.selected.selected {
+  fill: #E4FDE1;
+}
+.query.hover {
+  fill: #028090;
+}
 </style>
