@@ -30,6 +30,7 @@ export default defineConfig({
         copy({
           targets: [
             { src: 'Extension/manifest.json', dest: 'dist' },
+            { src: 'Extension/assets/*', dest: 'dist/assets'}
           ]
         })
       ]
