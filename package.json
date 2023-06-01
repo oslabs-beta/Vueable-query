@@ -14,8 +14,9 @@
   "dependencies": {
     "@pinia/testing": "^0.1.2",
     "d3": "^7.8.4",
-    "pinia": "^2.1.3",
-    "vue": "^3.3.4",
+    "pinia": "^2.0.35",
+    "sass": "^1.62.1",
+    "vue": "^3.2.47",
     "vue-dd": "^1.5.0"
   },
   "devDependencies": {
