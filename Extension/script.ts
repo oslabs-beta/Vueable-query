@@ -29,7 +29,7 @@ if(!(Object.prototype.hasOwnProperty.call(window, '__VUE__'))){ // check if Vue 
   // post messages to the window
   const callback = (event: Event) => {
     // new query (either fresh or after invalidation)
-    console.log(event.query.queryHash, event.type, event.action?.type, event.query.isStale());
+    // console.log(event.query.queryHash, event.type, event.action?.type, event.query.isStale());
 
     //for fetch requests
     if (event.type === 'updated' && event.action?.type === 'fetch') {

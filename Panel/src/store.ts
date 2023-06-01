@@ -14,6 +14,8 @@ export const useQueryStore = defineStore('query', () => {
   // ---setters---
   // setters can't be arrow functions
   function setPageStartTime(time: number): void {
+    // reset the history when we get a new start time
+    resetHistory();
     pageStartTime.value = time;
     // console.log('pageStartTime: ', pageStartTime.value)
   }

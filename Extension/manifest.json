@@ -1,14 +1,10 @@
 {
   "name": "Vueable Query", 
   "version": "1.0.0", 
-  "description": "This is an extension to monitor query completion time, cache hits/misses on the client side, graph visualization of data flow and subscribers to caches, includes a timeline for the sequence of queries, and report on query activities with a compilesWithDevTools model.",
+  "description": "This extension creates a Dev Tool Panel to monitor performance metrics for Vue apps that use Tanstack Query for Vue.",
   "manifest_version": 3,
   "author": "Anna Duong, Brandon Yoon, Eric Tjon, & Esther Witbeck",
   "devtools_page": "devtools.html",
-  "permissions": [
-    "tabs",
-    "webNavigation"
-  ], 
   "icons": {
     "128": "/assets/Vueable_Query_logo_128.png"
   },
