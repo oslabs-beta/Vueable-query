@@ -9,14 +9,15 @@ const maxCount = 10;
 //set height of data points on graph
 const queryHeight = 20;
 //set vertical padding between data points
-const innerPaddingHeight = 12;
+const innerPaddingHeight = 20;
 //calculate baseHeight to determine range of yaxis before crossing threshold 
 const baseHeight = maxCount * queryHeight + (maxCount - 1) * innerPaddingHeight;
 //calulate inner padding ratio for scale bands before crossing threshold
 const baseInnerRatio = ((maxCount - 1) * innerPaddingHeight) / ((maxCount - 1) * innerPaddingHeight + (maxCount * queryHeight)); 
 //set constant outer padding ratio for scale bands before crossing threshold
 const baseOuterRatio = 0.4;
-
+//set radius of circle
+const circleRadius = 3.5;
 //margins
 const margins = ref({
     top: 50,
@@ -218,10 +219,14 @@ const refreshGraph = (): void => {
             return x(d.endTime);
         })
         .attr('cy', function(d) {
+            if(d.startTime === d.endTime) {
+              // @ts-ignore d.queryHash is always defined
+              return y(d.queryHash) + y.bandwidth() / 2 + queryHeight / 2 + circleRadius;
+            }
             // @ts-ignore d.queryHash is always defined
-            return y(d.queryHash) + y.bandwidth() / 2 - queryHeight / 2 - 2 ;
+            return y(d.queryHash) + y.bandwidth() / 2 - queryHeight / 2 - circleRadius;
         })
-        .attr('r', 3.5)
+        .attr('r', circleRadius)
         //fixed height of bar
         .attr('height', queryHeight)
         .classed('query', true)
