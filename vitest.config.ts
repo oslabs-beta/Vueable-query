@@ -7,6 +7,7 @@ export default mergeConfig(
   viteConfig,
   defineConfig({
     test: {
+
       environment: 'jsdom',
       globals: true,
       exclude: [...configDefaults.exclude, 'e2e/*'],
@@ -14,6 +15,7 @@ export default mergeConfig(
       transformMode: {
         web: [/\.[jt]sx$/],
       },
+      
     }
   })
 )
