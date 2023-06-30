@@ -20,19 +20,15 @@
     class="query-text"  
   >
     <span class="cache-info">
-      &emsp; &rarr; Fetch Query at: 
-      <span class="hash">{{ c.queryHash }}</span>
-       at {{ c.startTime }}ms
-      &emsp;
+      &emsp; &rarr; Fetched from {{ c.startTime }}ms to {{ c.endTime }}ms with data:&nbsp;
       <vue-dd
         class="text-panel-object"
         :preview="false"
-        max-width="35%"
         :dark="false"
-        :model-value="c"
+        :model-value="c.data"
       /> 
+      <br/>
     </span>
-    <br/>
   </div>
 </template>
 
