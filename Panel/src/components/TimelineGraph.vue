@@ -235,7 +235,7 @@ const refreshGraph = (): void => {
             store.setHoverSelection(d.originalIndex)
             toolTipMouseOver(e, d);
         })
-        .on("mouseout", (e, d) => {
+        .on("mouseout", (e) => {
             d3.select(e.target).style("cursor", "");
             store.setHoverSelection(-1);
             toolTipMouseOut();
