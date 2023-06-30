@@ -37,17 +37,8 @@
 .query-text:hover {
     cursor: pointer;
   }
-.query-text {
-  display: flex;
-  justify-content: left;
-  align-items: center;
-  vertical-align: center;
-}
 .cache-info {
     font-size: 16px;
-    display: flex;
   }
-.hash {
-    color: #F45B69;
-  }
+
 </style>

@@ -33,10 +33,10 @@
 </template>
 
 <style scoped>
-.cache-info {
-    font-size: 16px;
-  }
- .hash {
-    color: #F45B69;
+  .cache-info {
+      font-size: 16px;
+    }
+  .query-text:hover {
+    cursor: pointer;
   }
 </style>
