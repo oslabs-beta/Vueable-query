@@ -100,11 +100,11 @@ const refreshGraph = (): void => {
     svg.append('g')
         .call(d3.axisLeft(y).tickFormat((x) => {
             //create a var that is the cutoff point for y-axis labels
-            const maxLength = 10; 
+            const maxLength = 11; 
             if(x.length <= maxLength) { //check if query hash is less than 10 char
                 return x; //display query hash as is
             } else {
-                return x.slice(0, maxLength) + '...'; //truncate label
+                return x.slice(0, maxLength - 2) + '...'; //truncate label
             }
         }))
         .append("text")
