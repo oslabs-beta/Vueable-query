@@ -27,7 +27,7 @@ const margins = ref({
 });
 
 // dynamic svg width
-const rawWidth = ref(550); 
+const rawWidth = ref(Math.max(window.innerWidth - 80, 350)); 
 //dynamic svg height
 const rawHeight = computed(() => baseHeight + margins.value.top - margins.value.bottom) 
 //calculate width of timeline graph
@@ -337,8 +337,15 @@ watch(() => store.hoverSelection, () => {
     .classed('hover', true);
  selectionState.hoverSelection = hoverSelection;
 })
-// needed for tests to render d3 without store change
-onMounted(() => refreshGraph());
+
+// Renders graph on mount
+onMounted(() => refreshGraph())
+// Resizes graph on window resize
+const handleResize = () => {
+  rawWidth.value = Math.max(window.innerWidth - 80, 350)
+  refreshGraph()
+}
+onMounted(() => window.addEventListener('resize', handleResize))
 </script>
 
 <template>
