@@ -27,6 +27,7 @@ interface Event {
 interface Query {
   queryHash: string;
   isStale: () => boolean;
+  state: {data: any};
 }
 
 interface FormattedQuery {
@@ -36,4 +37,5 @@ interface FormattedQuery {
   duration: string;
   type: string;
   originalIndex: number;
+  data: any;
 }

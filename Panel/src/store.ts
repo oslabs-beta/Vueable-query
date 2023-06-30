@@ -59,6 +59,7 @@ export const useQueryStore = defineStore('query', () => {
         duration: `${message.payload.endTime -  message.payload.startTime}ms`,
         type: message.payload.type,
         originalIndex: i,
+        data: message.payload.event.query.state.data,
       }
     })
   }) 
