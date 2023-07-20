@@ -1,14 +1,15 @@
 <script setup lang="ts">
-
 import { useQueryStore } from '../store';
 import TimelineGraph from './TimelineGraph.vue';
-const { setSelection } = useQueryStore();
+const store = useQueryStore();
+
 </script>
 
 <template>
   <div
     id="timeline-panel"
-    @click="setSelection(-1)"
+    @click="store.setSelection(-1)"
+    :style="{ height:store.timelinePanelHeight + 'px' }"
   >
     <h2>Query Timeline</h2> 
     <TimelineGraph />

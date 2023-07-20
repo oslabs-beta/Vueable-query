@@ -6,9 +6,6 @@ import { ref, onMounted, onUnmounted} from 'vue';
 
 const store = useQueryStore();
 
-const container = ref<HTMLDivElement | null>(null)
-const topHeight = ref(500)
-const bottomHeight = ref(500)
 const isResizing = ref(false);
 
 const startResize = () => {
@@ -21,13 +18,11 @@ const stopResize = () => {
 
 const resize = (e:MouseEvent) => {
   if (!isResizing.value) return;
-
-  const containerHeight = container.value?.clientHeight || 0;
   const mouseY = e.clientY;
-  topHeight.value = mouseY;
-  bottomHeight.value = containerHeight - mouseY - 8; // Subtract 8px for the height of the resize handle
-};
+  console.log(mouseY)
+  store.setTimelinePanelHeight(mouseY - 40);
 
+};
 
 onMounted(() => {
   document.addEventListener('mousemove', resize);
@@ -43,15 +38,12 @@ onUnmounted(() => {
 
 <template>
   <div v-if="store.pageStartTime > 0" class="container" ref="container">
-    <div class="top" :style="{ height: topHeight + 'px' }">
-      <TimelinePanel />
+    <TimelinePanel />
+    <div class="resizer" @mousedown="startResize">
+    =
     </div>
-    <div class="resizer" :style="{ height: '8px' }" @mousedown="startResize">
+    <TextPanel />
 
-    </div>
-    <div class="bottom" :style="{ height: bottomHeight + 'px' }">
-      <TextPanel />
-    </div>
   </div>
   <div id="error" v-else>
     Tanstack Query for Vue not found on current page 😢
@@ -69,20 +61,21 @@ onUnmounted(() => {
   }
 
   .resizer{
-    background-color: aqua;
+    background-color: rgb(100, 100, 100);
+    color: white;
+    text-align: center;
   }
 
-  .top, .bottom {
-    overflow:auto;
-    flex-grow: 1;
-  }
 
   #timeline-panel, 
   #text-panel {
-    flex-grow: 1;
     overflow: auto;
     padding: 10px;
     min-width: 380px;
     border-style: solid;
+  }
+
+  #text-panel{
+    flex-grow: 1;
   }
 </style>
