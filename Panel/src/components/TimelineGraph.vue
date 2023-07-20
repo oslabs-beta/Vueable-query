@@ -27,7 +27,7 @@ const margins = ref({
 });
 
 // dynamic svg width
-const rawWidth = ref(550); 
+const rawWidth = ref(Math.max(window.innerWidth - 80, 350)); 
 //dynamic svg height
 const rawHeight = computed(() => baseHeight + margins.value.top - margins.value.bottom) 
 //calculate width of timeline graph
@@ -100,11 +100,11 @@ const refreshGraph = (): void => {
     svg.append('g')
         .call(d3.axisLeft(y).tickFormat((x) => {
             //create a var that is the cutoff point for y-axis labels
-            const maxLength = 10; 
+            const maxLength = 11; 
             if(x.length <= maxLength) { //check if query hash is less than 10 char
                 return x; //display query hash as is
             } else {
-                return x.slice(0, maxLength) + '...'; //truncate label
+                return x.slice(0, maxLength - 2) + '...'; //truncate label
             }
         }))
         .append("text")
@@ -337,8 +337,15 @@ watch(() => store.hoverSelection, () => {
     .classed('hover', true);
  selectionState.hoverSelection = hoverSelection;
 })
-// needed for tests to render d3 without store change
-onMounted(() => refreshGraph());
+
+// Renders graph on mount
+onMounted(() => refreshGraph())
+// Resizes graph on window resize
+const handleResize = () => {
+  rawWidth.value = Math.max(window.innerWidth - 80, 350)
+  refreshGraph()
+}
+onMounted(() => window.addEventListener('resize', handleResize))
 </script>
 
 <template>

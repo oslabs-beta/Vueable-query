@@ -28,7 +28,7 @@ const store = useQueryStore();
   }
 
   h2 {
-    font-family: 'Cormorant Garamond', serif;
+    /* font-family: 'Cormorant Garamond', serif; */
     text-align: center;
     font-weight: 700;
     font-size: 20px;
