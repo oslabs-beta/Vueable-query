@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { useQueryStore } from '../store';
-import TimelineGraph from './TimelineGraph.vue';
-const store = useQueryStore();
-
+  import { useQueryStore } from '../store';
+  import TimelineGraph from './TimelineGraph.vue';
+  const store = useQueryStore();
 </script>
 
 <template>
@@ -14,7 +13,6 @@ const store = useQueryStore();
     <h2>Query Timeline</h2> 
     <TimelineGraph />
   </div>
- 
 </template>
 
 <style scoped>

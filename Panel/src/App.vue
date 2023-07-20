@@ -1,39 +1,35 @@
 <script setup lang="ts">
-import TimelinePanel from './components/TimelinePanel.vue'
-import TextPanel from './components/TextPanel.vue'
-import { useQueryStore } from './store';
-import { ref, onMounted, onUnmounted} from 'vue';
+  import TimelinePanel from './components/TimelinePanel.vue'
+  import TextPanel from './components/TextPanel.vue'
+  import { useQueryStore } from './store';
+  import { ref, onMounted, onUnmounted} from 'vue';
 
-const store = useQueryStore();
+  const store = useQueryStore();
+  // isResizing is true when resize bar is clicked
+  const isResizing = ref(false);
+  const startResize = () => {
+    isResizing.value = true;
+  };
+  const stopResize = () => {
+    isResizing.value = false;
+  };
+  const resize = (e:MouseEvent) => {
+    if (!isResizing.value) return;
+    const mouseY = e.clientY;
+    // -40 to account for margins
+    store.setTimelinePanelHeight(mouseY - 40);
+    e.stopPropagation();
+  };
+  // event listeners for resizing functions
+  onMounted(() => {
+    document.addEventListener('mousemove', resize);
+    document.addEventListener('mouseup', stopResize);
+  });
 
-const isResizing = ref(false);
-
-const startResize = () => {
-  isResizing.value = true;
-};
-
-const stopResize = () => {
-  isResizing.value = false;
-};
-
-const resize = (e:MouseEvent) => {
-  if (!isResizing.value) return;
-  const mouseY = e.clientY;
-  console.log(mouseY)
-  store.setTimelinePanelHeight(mouseY - 40);
-  e.stopPropagation();
-
-};
-
-onMounted(() => {
-  document.addEventListener('mousemove', resize);
-  document.addEventListener('mouseup', stopResize);
-});
-
-onUnmounted(() => {
-  document.removeEventListener('mousemove', resize);
-  document.removeEventListener('mouseup', stopResize);
-});
+  onUnmounted(() => {
+    document.removeEventListener('mousemove', resize);
+    document.removeEventListener('mouseup', stopResize);
+  });
 
 </script>
 

@@ -8,7 +8,9 @@ export const useQueryStore = defineStore('query', () => {
   // selection is the index of the query array
   const selection: Ref<number> = ref(-1);
   const hoverSelection: Ref<number> = ref(-1);
-  const pageStartTime: Ref<number> = ref(-1); //when script first loads up
+  //when script first loads up
+  const pageStartTime: Ref<number> = ref(-1); 
+  //height of the timeline panel in px, text panel flex-grows the remaining space
   const timelinePanelHeight: Ref<number> = ref(500);
 
   // ---setters---
