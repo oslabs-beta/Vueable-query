@@ -21,6 +21,7 @@ const resize = (e:MouseEvent) => {
   const mouseY = e.clientY;
   console.log(mouseY)
   store.setTimelinePanelHeight(mouseY - 40);
+  e.stopPropagation();
 
 };
 
@@ -77,5 +78,6 @@ onUnmounted(() => {
 
   #text-panel{
     flex-grow: 1;
+    height: 10px;
   }
 </style>
