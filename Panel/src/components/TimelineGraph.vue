@@ -54,11 +54,11 @@
 
   //calculate computed additional y-axis length after crossing threshold  
   const yAxisAddition = computed(() => { 
-      if (store.keys.length > maxCount) {
-          const diff = store.keys.length - maxCount;
-          return diff * (innerPaddingHeight + queryHeight);
-      }
-      else return 0;
+    if (store.keys.length > maxCount) {
+      const diff = store.keys.length - maxCount;
+      return diff * (innerPaddingHeight + queryHeight);
+    }
+    else return 0;
   })
 
   const selectionState: {
@@ -91,159 +91,159 @@
       .classed('graph', true)
       
       // y axis
-      const y = d3.scaleBand()
-          .domain(store.keys)
-          .range([0, baseHeight + yAxisAddition.value])
-          .paddingInner(paddingInner.value)
-          .paddingOuter(paddingOuter.value)
+    const y = d3.scaleBand()
+      .domain(store.keys)
+      .range([0, baseHeight + yAxisAddition.value])
+      .paddingInner(paddingInner.value)
+      .paddingOuter(paddingOuter.value)
 
-      svg.append('g')
-          .call(d3.axisLeft(y).tickFormat((x) => {
-              //create a var that is the cutoff point for y-axis labels
-              const maxLength = 11; 
-              if(x.length <= maxLength) { //check if query hash is less than 10 char
-                  return x; //display query hash as is
-              } else {
-                  return x.slice(0, maxLength - 2) + '...'; //truncate label
-              }
-          }))
-          .append("text")
-              .attr("class", "y-title")
-              .attr("transform", "rotate(-90)") //rotate y-axis title vertically
-              .attr("text-anchor", "middle") //signify that this y-axis title will position itself relative to the end of its div
-              .attr("x",  -(baseHeight / 2) - yAxisAddition.value / 2) //position y-axis title relative to the midpoint of the y-axis
-              .attr("y", -70) //position the y-axis title left of the y-axis labels
-              .text("Query Hashes")
-              .attr('fill','white')
-              .attr('fill','white')
-              .attr('font-weight', '700')
-              .attr('font-size', '17px')
+    svg.append('g')
+      .call(d3.axisLeft(y).tickFormat((x) => {
+        //create a var that is the cutoff point for y-axis labels
+        const maxLength = 11; 
+        if(x.length <= maxLength) { //check if query hash is less than 10 char
+          return x; //display query hash as is
+        } else {
+          return x.slice(0, maxLength - 2) + '...'; //truncate label
+        }
+      }))
+      .append("text")
+        .attr("class", "y-title")
+        .attr("transform", "rotate(-90)") //rotate y-axis title vertically
+        .attr("text-anchor", "middle") //signify that this y-axis title will position itself relative to the end of its div
+        .attr("x",  -(baseHeight / 2) - yAxisAddition.value / 2) //position y-axis title relative to the midpoint of the y-axis
+        .attr("y", -70) //position the y-axis title left of the y-axis labels
+        .text("Query Hashes")
+        .attr('fill','white')
+        .attr('fill','white')
+        .attr('font-weight', '700')
+        .attr('font-size', '17px')
 
-      svg.selectAll(".tick text")
+    svg.selectAll(".tick text")
       .attr("fill","#F45B69")
 
       // x axis
-      const x = d3.scaleLinear()
-          .domain([0, store.lastEndTime])
-          .range([0, width.value])
+    const x = d3.scaleLinear()
+      .domain([0, store.lastEndTime])
+      .range([0, width.value])
       
-      svg.append('g')
-          //dynamically rescale x-axis tick labels
-          .call(d3.axisTop(x).ticks(8).tickFormat((x) => {
-              let second = x.valueOf() / 1_000
-              let minute = Math.floor(second / 60);
-              let hour = Math.floor(minute / 60);
-              //check if ms is over an hour
-              if(x.valueOf() >= 3.6e+6) {
-                  return `${hour}h:${(x.valueOf()-(hour * 3_600_000) / 1_000 / 60).toPrecision(1)}m`
-              }
-              //check if current time in ms is greater than a minute
-              else if(x.valueOf() >= 60_000) { 
-                  return `${minute}m${(x.valueOf() - (minute * 60_000)) / 1_000}s` 
-              } 
-              //check if ms is greater than a second
-              else if (x.valueOf() >= 1_000){ 
-                  return `${second.toPrecision(2)}s` //convert ms to seconds
-              } 
-              else if( x.valueOf() < 0) {
-                  return '';
-              }
-              else {
-                  return `${x}ms` //keep time as ms
-              }
-          }))
-          //add titles for x-axis
-          //axis title arent built in so we need to manual add a 'text' element ourselves
-          .append("text")
-              .attr("class", "x-title")
-              .attr("text-anchor", "middle") //signify that this x-axis title will position itself relative to the midpoint of its div
-              .attr("x", width.value/2) //position the x-axis title in the middle of the x-axis
-              .attr("y", -margins.value.top / 2 - 5) //position the axis title above the x-axis (negative value to move up)
-              .text("Time")
-              .attr('fill','white')
-              .attr('font-weight', '700')
-              .attr('font-size', '17px')
+    svg.append('g')
+      //dynamically rescale x-axis tick labels
+      .call(d3.axisTop(x).ticks(8).tickFormat((x) => {
+        let second = x.valueOf() / 1_000
+        let minute = Math.floor(second / 60);
+        let hour = Math.floor(minute / 60);
+        //check if ms is over an hour
+        if(x.valueOf() >= 3.6e+6) {
+            return `${hour}h:${(x.valueOf()-(hour * 3_600_000) / 1_000 / 60).toPrecision(1)}m`
+        }
+        //check if current time in ms is greater than a minute
+        else if(x.valueOf() >= 60_000) { 
+            return `${minute}m${(x.valueOf() - (minute * 60_000)) / 1_000}s` 
+        } 
+        //check if ms is greater than a second
+        else if (x.valueOf() >= 1_000){ 
+            return `${second.toPrecision(2)}s` //convert ms to seconds
+        } 
+        else if( x.valueOf() < 0) {
+            return '';
+        }
+        else {
+            return `${x}ms` //keep time as ms
+        }
+      }))
+      //add titles for x-axis
+      //axis title arent built in so we need to manual add a 'text' element ourselves
+      .append("text")
+        .attr("class", "x-title")
+        .attr("text-anchor", "middle") //signify that this x-axis title will position itself relative to the midpoint of its div
+        .attr("x", width.value/2) //position the x-axis title in the middle of the x-axis
+        .attr("y", -margins.value.top / 2 - 5) //position the axis title above the x-axis (negative value to move up)
+        .text("Time")
+        .attr('fill','white')
+        .attr('font-weight', '700')
+        .attr('font-size', '17px')
 
       //create a shapes variable
-      const shapes = svg
-        .selectAll('.shapes')
-        .data(store.queries)
-        .enter()
+    const shapes = svg
+      .selectAll('.shapes')
+      .data(store.queries)
+      .enter()
       //render rectangle for query/cache hits
-      shapes.append("rect")
-          .attr('x', function(d) {
-              //places rectangle on endTime
-              return x(d.startTime);
-          })
-          .attr('y', function(d) {
-              // @ts-ignore d.queryHash is always defined
-              return y(d.queryHash) + y.bandwidth() / 2 - queryHeight / 2;
-          })
-          //width of the bar for either a query or cache hit
-          .attr('width', function(d) {
-              return (x(d.endTime) - x(d.startTime)) || 1;
-              // return 2 //fixed width
-          })
-          //fixed height of bar
-          .attr('height', queryHeight)
-          .classed('query', true)
-          .on('mouseover', (e, d) => {
-              d3.select(e.target).style("cursor", "pointer");
-              store.setHoverSelection(d.originalIndex)
-              toolTipMouseOver(e, d);
-          })
-          .on("mouseout", (e) => {
-              d3.select(e.target).style("cursor", "");
-              store.setHoverSelection(-1);
-              toolTipMouseOut();
-          })
-          .on("click", (e, d) => {
-              e.stopPropagation();
-              store.setSelection(d.originalIndex);
-          })
-      //circle
-      shapes.append("circle")
-          //only add circles if rect shrink to at least 2px
-          .filter(function(d) {
-              return (x(d.endTime) - x(d.startTime) <= 2);
-          })
-          .attr('cx', function(d) {
-              //create var to hold the pixel width of the rect
-              const widthPX = (x(d.endTime) - x(d.startTime))
-              //if pixel is between length of 1 to 2 px
-                //subtract 0.5px to align circle ontop rect
-              if ((widthPX > 1)) {
-                  return x(d.endTime) - 0.5; 
-              }
-              //defaults circle to align ontop rect that is 1px or less
-              return x(d.endTime);
-          })
-          .attr('cy', function(d) {
-              if(d.startTime === d.endTime) {
-                // @ts-ignore d.queryHash is always defined
-                return y(d.queryHash) + y.bandwidth() / 2 + queryHeight / 2 + circleRadius;
-              }
-              // @ts-ignore d.queryHash is always defined
-              return y(d.queryHash) + y.bandwidth() / 2 - queryHeight / 2 - circleRadius;
-          })
-          .attr('r', circleRadius)
-          //fixed height of bar
-          .attr('height', queryHeight)
-          .classed('query', true)
-          .on('mouseover', (e, d) => {
-              d3.select(e.target).style("cursor", "pointer");
-              store.setHoverSelection(d.originalIndex)
-              toolTipMouseOver(e, d);
-          })
-          .on("mouseout", (e) => {
-              d3.select(e.target).style("cursor", "");
-              store.setHoverSelection(-1);
-              toolTipMouseOut();
-          })
-          .on("click", (e, d) => {
-              e.stopPropagation();
-              store.setSelection(d.originalIndex);
-          })
+    shapes.append("rect")
+      .attr('x', function(d) {
+        //places rectangle on endTime
+        return x(d.startTime);
+      })
+      .attr('y', function(d) {
+        // @ts-ignore d.queryHash is always defined
+        return y(d.queryHash) + y.bandwidth() / 2 - queryHeight / 2;
+      })
+      //width of the bar for either a query or cache hit
+      .attr('width', function(d) {
+        return (x(d.endTime) - x(d.startTime)) || 1;
+        // return 2 //fixed width
+      })
+      //fixed height of bar
+      .attr('height', queryHeight)
+      .classed('query', true)
+      .on('mouseover', (e, d) => {
+        d3.select(e.target).style("cursor", "pointer");
+        store.setHoverSelection(d.originalIndex)
+        toolTipMouseOver(e, d);
+      })
+      .on("mouseout", (e) => {
+        d3.select(e.target).style("cursor", "");
+        store.setHoverSelection(-1);
+        toolTipMouseOut();
+      })
+      .on("click", (e, d) => {
+        e.stopPropagation();
+        store.setSelection(d.originalIndex);
+      })
+    //circle
+    shapes.append("circle")
+      //only add circles if rect shrink to at least 2px
+      .filter(function(d) {
+        return (x(d.endTime) - x(d.startTime) <= 2);
+      })
+      .attr('cx', function(d) {
+          //create var to hold the pixel width of the rect
+          const widthPX = (x(d.endTime) - x(d.startTime))
+          //if pixel is between length of 1 to 2 px
+            //subtract 0.5px to align circle ontop rect
+          if ((widthPX > 1)) {
+              return x(d.endTime) - 0.5; 
+          }
+          //defaults circle to align ontop rect that is 1px or less
+          return x(d.endTime);
+      })
+      .attr('cy', function(d) {
+        if(d.startTime === d.endTime) {
+          // @ts-ignore d.queryHash is always defined
+          return y(d.queryHash) + y.bandwidth() / 2 + queryHeight / 2 + circleRadius;
+        }
+        // @ts-ignore d.queryHash is always defined
+        return y(d.queryHash) + y.bandwidth() / 2 - queryHeight / 2 - circleRadius;
+      })
+      .attr('r', circleRadius)
+      //fixed height of bar
+      .attr('height', queryHeight)
+      .classed('query', true)
+      .on('mouseover', (e, d) => {
+        d3.select(e.target).style("cursor", "pointer");
+        store.setHoverSelection(d.originalIndex)
+        toolTipMouseOver(e, d);
+      })
+      .on("mouseout", (e) => {
+        d3.select(e.target).style("cursor", "");
+        store.setHoverSelection(-1);
+        toolTipMouseOut();
+      })
+      .on("click", (e, d) => {
+        e.stopPropagation();
+        store.setSelection(d.originalIndex);
+      })
 
     // add tooltip
     const padding = 5;
@@ -335,7 +335,7 @@
       //TODO  fix typing
       .filter((d:any) => d.originalIndex === store.hoverSelection)
       .classed('hover', true);
-  selectionState.hoverSelection = hoverSelection;
+    selectionState.hoverSelection = hoverSelection;
   })
 
   // Renders graph on mount
