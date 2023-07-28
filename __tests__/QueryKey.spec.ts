@@ -43,9 +43,10 @@ describe('Query End Vue Component', () => {
     }) 
   })
   describe('displays', () => {
-    console.log(store);
+    it('the query hash', () => {
+      expect(wrapper.text()).toContain(store.endQueries[0].queryHash)
+    })
     it('a Query Cache hit component', () => {
-      
       expect(wrapper.findAllComponents(QueryCacheHitVue).length).toBe(2)
     })
     it('a Query End component', () => {

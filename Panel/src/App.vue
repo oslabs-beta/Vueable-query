@@ -1,15 +1,46 @@
 <script setup lang="ts">
-import TimelinePanel from './components/TimelinePanel.vue'
-import TextPanel from './components/TextPanel.vue'
-import { useQueryStore } from './store';
-const store = useQueryStore();
+  import TimelinePanel from './components/TimelinePanel.vue'
+  import TextPanel from './components/TextPanel.vue'
+  import { useQueryStore } from './store';
+  import { ref, onMounted, onUnmounted} from 'vue';
+
+  const store = useQueryStore();
+  // isResizing is true when resize bar is clicked
+  const isResizing = ref(false);
+  const startResize = () => {
+    isResizing.value = true;
+  };
+  const stopResize = () => {
+    isResizing.value = false;
+  };
+  const resize = (e:MouseEvent) => {
+    if (!isResizing.value) return;
+    const mouseY = e.clientY;
+    // -40 to account for margins
+    store.setTimelinePanelHeight(mouseY - 40);
+    e.stopPropagation();
+  };
+  // event listeners for resizing functions
+  onMounted(() => {
+    document.addEventListener('mousemove', resize);
+    document.addEventListener('mouseup', stopResize);
+  });
+
+  onUnmounted(() => {
+    document.removeEventListener('mousemove', resize);
+    document.removeEventListener('mouseup', stopResize);
+  });
 
 </script>
 
 <template>
-  <div v-if="store.pageStartTime > 0" class="container">
+  <div v-if="store.pageStartTime > 0" class="container" ref="container">
     <TimelinePanel />
+    <div class="resizer" @mousedown="startResize">
+    =
+    </div>
     <TextPanel />
+
   </div>
   <div id="error" v-else>
     Tanstack Query for Vue not found on current page 😢
@@ -26,13 +57,23 @@ const store = useQueryStore();
     justify-content: center;
   }
 
+  .resizer{
+    background-color: rgb(100, 100, 100);
+    color: white;
+    text-align: center;
+  }
+
+
   #timeline-panel, 
   #text-panel {
-    height: 50%;
-    flex-grow: 1;
     overflow: auto;
     padding: 10px;
     min-width: 380px;
     border-style: solid;
+  }
+
+  #text-panel{
+    flex-grow: 1;
+    height: 10px;
   }
 </style>

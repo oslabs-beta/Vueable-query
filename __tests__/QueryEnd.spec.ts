@@ -40,9 +40,6 @@ describe('Query End Vue Component', () => {
     }) 
   })
   describe('displays', () => {
-    it('the query hash', () => {
-      expect(wrapper.text()).toContain(store.endQueries[0].queryHash)
-    })
     it('the start time', () => {
       expect(wrapper.text()).toContain(store.endQueries[0].startTime)
     })

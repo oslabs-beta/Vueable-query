@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import { useQueryStore } from '../store';
+  import { VueDd } from 'vue-dd';
   const store = useQueryStore(); 
   const props = defineProps<{
     c: FormattedQuery
@@ -19,19 +20,23 @@
     class="query-text"
   >
     <span class="cache-info">
-      &emsp; &rarr; Cache hit for key: 
-      <span class="hash">{{ (c.queryHash) }}</span>
-      at {{ c.startTime }}ms
+      &emsp; &rarr; Cache hit at {{ c.startTime }}ms with data:&nbsp;
+      <vue-dd
+        class="text-panel-object"
+        :preview="false"
+        :dark="false"
+        :model-value="c.data"
+      /> 
       <br/>
     </span>
   </div>
 </template>
 
 <style scoped>
-.cache-info {
-    font-size: 16px;
-  }
- .hash {
-    color: #F45B69;
+  .cache-info {
+      font-size: 16px;
+    }
+  .query-text:hover {
+    cursor: pointer;
   }
 </style>

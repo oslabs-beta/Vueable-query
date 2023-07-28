@@ -38,9 +38,6 @@ describe('Query Cache Hit Vue Component', () => {
     }) 
   })
   describe('displays', () => {
-    it('the query hash', () => {
-      expect(wrapper.text()).toContain(store.cacheQueries[0].queryHash)
-    })
     it('the start time', () => {
       expect(wrapper.text()).toContain(store.cacheQueries[0].startTime)
     })
