@@ -19,6 +19,7 @@
   #timeline-panel {
     background-color: rgb(45, 45, 45);
     color: white;
+    overflow-y: scroll;
   }
   .queryBox {
     width: fit-content;
