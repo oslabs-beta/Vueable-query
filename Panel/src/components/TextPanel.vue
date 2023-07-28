@@ -21,6 +21,7 @@
     background-color: rgb(45, 45, 45);
     color: white;
     padding: 30px;
+    overflow-y: scroll;
   } 
   
 </style>

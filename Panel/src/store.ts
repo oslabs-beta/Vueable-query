@@ -6,10 +6,12 @@ export const useQueryStore = defineStore('query', () => {
   // ---definitions---
   const data: Ref<Message[]> = ref([]);
   // selection is the index of the query array
-  const selection: Ref<number> = ref(-1)
-  const hoverSelection: Ref<number> = ref(-1)
-  const pageStartTime: Ref<number> = ref(-1); //when script first loads up
-
+  const selection: Ref<number> = ref(-1);
+  const hoverSelection: Ref<number> = ref(-1);
+  //when script first loads up
+  const pageStartTime: Ref<number> = ref(-1); 
+  //height of the timeline panel in px, text panel flex-grows the remaining space
+  const timelinePanelHeight: Ref<number> = ref(500);
 
   // ---setters---
   // setters can't be arrow functions
@@ -34,6 +36,10 @@ export const useQueryStore = defineStore('query', () => {
   function setSelection(index: number): void {
     selection.value = index;
     console.log(selection.value)
+  }
+
+  function setTimelinePanelHeight(height: number): void{
+    timelinePanelHeight.value = height
   }
 
   function setHoverSelection(index: number): void {
@@ -100,5 +106,5 @@ export const useQueryStore = defineStore('query', () => {
 
 
   return {data, keys, queries, addNewQuery, resetHistory, endQueries, cacheQueries, setSelection, setHoverSelection,
-    pageStartTime, selection, hoverSelection, setPageStartTime,lastEndTime }
+    pageStartTime, selection, hoverSelection, setPageStartTime,lastEndTime, timelinePanelHeight, setTimelinePanelHeight }
 })
