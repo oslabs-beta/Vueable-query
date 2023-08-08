@@ -1,6 +1,6 @@
 {
   "name": "Vueable Query", 
-  "version": "1.1.0", 
+  "version": "1.2.0", 
   "description": "This extension creates a Dev Tool Panel to monitor performance metrics for Vue apps that use Tanstack Query for Vue.",
   "manifest_version": 3,
   "author": "Anna Duong, Brandon Yoon, Eric Tjon, & Esther Witbeck",
@@ -19,7 +19,10 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
+      "exclude_matches": ["https://docs.google.com/*"],
       "js": ["content.js"]
+      
+
 
     }
   ]
